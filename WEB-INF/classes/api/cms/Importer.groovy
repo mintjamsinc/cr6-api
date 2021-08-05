@@ -1,0 +1,245 @@
+// Copyright (c) 2021 MintJams Inc. Licensed under MIT License.
+
+package api.cms;
+
+import api.util.ISO8601;
+import api.util.JSON;
+import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+
+class Importer {
+	def context;
+	def dataFile;
+	def statusFile;
+	def status;
+	def preImportedEntries = [];
+	def log;
+
+	Importer(context) {
+		this.context = context;
+		log = context.getAttribute("log");
+	}
+
+	static def create(ScriptingContext context) {
+		return new Importer(context);
+	}
+
+	def execute(String absPath, file) {
+		dataFile = file;
+		dataFile.deleteOnExit();
+		statusFile = File.createTempFile("import-", ".status");
+		statusFile.deleteOnExit();
+
+		def identifier = {
+    		def id = statusFile.name;
+    		id = id.substring(0, id.lastIndexOf("."));
+		}();
+		def created = new Date();
+		status = [
+		    "identifier": identifier,
+		    "dataPath": dataFile.canonicalPath,
+		    "status": "in-progress",
+		    "created": ISO8601.formatDate(created)
+		];
+		statusFile.text = JSON.stringify(status);
+
+		def batchSession = context.repositorySession.newSession();
+		Thread.startDaemon(status.identifier, {
+			batchSession.withCloseable { repositorySession ->
+				new ZipFile(dataFile).withCloseable { zip ->
+				    try {
+						def item = Item.create(context).with(repositorySession.resourceResolver.getResource(absPath));
+                    	if (!item.exists()) {
+                    	    throw new java.lang.IllegalArgumentException("The item does not exist: " + item.path);
+                    	}
+                    	if (!item.isCollection()) {
+                    	    throw new java.lang.IllegalArgumentException("The item is not collection: " + item.path);
+                    	}
+
+                	    zip.entries.each { entry ->
+                	        _imp(item, zip, entry);
+                	    }
+				    } catch (Throwable ex) {
+				        log.error(ex.message, ex);
+            			status.status = "error";
+            			status.statusText = ex.message;
+            			statusFile.text = JSON.stringify(status);
+				    } finally {
+				        try {
+                    		repositorySession.rollback();
+				        } catch (Throwable ignore) {}
+				    }
+				}
+			}
+
+            if (status.status == "in-progress") {
+    			status.status = "completed";
+    			statusFile.text = JSON.stringify(status);
+            }
+		});
+
+        return this;
+	}
+
+    def _imp(rootItem, zip, entry) {
+        if (preImportedEntries.contains(entry.name)) {
+            return;
+        }
+
+        def repositorySession = rootItem.resource.session;
+	    try {
+    		def impRelPath = {
+    			def name = entry.name;
+    			if (!name.startsWith("/")) {
+    				name = "/" + name;
+    			}
+    			if (name.startsWith("//")) {
+    				name = name.substring(1);
+    			}
+    			if (name.startsWith("/")) {
+    				name = name.substring(1);
+    			}
+    			if (name.endsWith("/")) {
+    				name = name.substring(0, name.length() - 1);
+    			}
+    			return name;
+    		}();
+
+    		def item = rootItem.getItem(impRelPath);
+    		if (item.name.startsWith(".") && item.name.endsWith(".metadata.json")) {
+    			return;
+    		}
+
+    		if (entry.isDirectory()) {
+    		    item.mkdirs();
+    			return;
+    		}
+
+    		if (item.exists()) {
+    			if (item.isVersionControlled()) {
+    				if (!item.isCheckedOut()) {
+    					item.checkout();
+    				}
+    			}
+    		} else {
+    			item.createNewFile();
+    		}
+
+    		zip.getInputStream(entry).withCloseable { stream ->
+				ItemHelper.create(context).with(item).importContent(stream, item.contentType);
+    		}
+
+    		def metadataName = {
+    			def name = entry.name;
+    			def i = name.lastIndexOf("/");
+    			if (i == -1) {
+    				name = "." + name + ".metadata.json";
+    			} else {
+    				def prefix = name.substring(0, i + 1);
+    				name = prefix + "." + name.substring(i + 1) + ".metadata.json";
+    			}
+    			return name;
+    		}();
+    		def metadataEntry = zip.getEntry(metadataName);
+    		if (metadataEntry) {
+    			def metadata = JSON.parse(zip.getInputStream(metadataEntry).getText("UTF-8"));
+    			item.allowAnyProperties();
+    			if (metadata.containsKey("mimeType")) {
+    				item.setAttribute("jcr:mimeType", metadata["mimeType"]);
+    			}
+    			if (metadata.containsKey("encoding")) {
+    				item.setAttribute("jcr:encoding", metadata["encoding"]);
+    			}
+    			if (metadata.containsKey("isReferenceable")) {
+    			    if (!!metadata["isReferenceable"]) {
+        				item.addReferenceable();
+    			    } else {
+        				//item.removeReferenceable();
+    			    }
+    			}
+    			if (metadata.containsKey("lastModificationTime")) {
+            		item.setAttribute("jcr:lastModified", ISO8601.parseDate(metadata["lastModificationTime"]));
+    			}
+    			if (metadata.containsKey("properties")) {
+    			    ItemHelper.create(context).with(item).importAttributes(metadata.properties);
+    			}
+    		}
+
+            repositorySession.commit();
+    		return item;
+	    } catch (ReferencedItemNotFoundException ex) {
+	        if (!ex.path) {
+	            throw ex;
+	        }
+	        if (!ex.path.startsWith(rootItem.path)) {
+	            throw ex;
+	        }
+
+	        repositorySession.rollback();
+
+	        def refEntryPath = ex.path.substring(rootItem.path.length());
+	        def refEntry = zip.getEntry(refEntryPath);
+	        if (!refEntry) {
+	            throw ex;
+	        }
+	        def refItem = _imp(rootItem, zip, refEntry);
+	        preImportedEntries.add(refEntry.name);
+
+            // retry
+	        return _imp(rootItem, zip, entry);
+	    }
+    }
+
+	def resolve(identifier) {
+		statusFile = new File(System.getProperty("java.io.tmpdir"), identifier + ".status");
+		if (statusFile.exists()) {
+    		status = JSON.parse(statusFile.text);
+    		dataFile = new File(status.dataPath);
+		}
+        return this;
+	}
+
+	def getIdentifier() {
+	    if (!status) {
+	        return null;
+	    }
+        return status.identifier;
+	}
+
+	def exists() {
+	    return (dataFile && dataFile.exists());
+	}
+
+	def remove() {
+	    if (dataFile && dataFile.exists()) {
+	        dataFile.delete();
+	    }
+	    if (statusFile && statusFile.exists()) {
+	        statusFile.delete();
+	    }
+        return this;
+	}
+
+	def toObject() {
+	    def o = [
+			"identifier": identifier
+        ];
+        if (status) {
+            o.status = status.status;
+            if (status.statusText) {
+                o.statusText = status.statusText;
+            }
+        }
+        if (dataFile && dataFile.exists()) {
+            o.file = [
+                "lastModified": ISO8601.formatDate(new Date(dataFile.lastModified())),
+			    "length": dataFile.length()
+			];
+        }
+        return o;
+	}
+
+	def toJson() {
+		return JSON.stringify(toObject());
+	}
+}
