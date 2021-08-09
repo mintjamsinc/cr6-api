@@ -1,0 +1,36 @@
+{
+  "name": "@mintjamsinc/cr6-api",
+  "version": "1.0.0",
+  "description": "A set of APIs pre-installed in MintJams Content Repository 6.x.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:Calculator_calculate.es": "eslint src/api/cms/Calculator_calculate.es",
+    "lint:Calculator_calculate.njs": "eslint src/api/cms/Calculator_calculate.njs",
+    "lint:Facet_getDisplayText.es": "eslint src/api/cms/Facet_getDisplayText.es",
+    "lint:Facet_getDisplayText.njs": "eslint src/api/cms/Facet_getDisplayText.njs",
+    "build:Calculator_calculate.es": "npm run lint:Calculator_calculate.es && rollup -c build/rollup.Calculator_calculate_es.js",
+    "build:Calculator_calculate.njs": "npm run lint:Calculator_calculate.njs && rollup -c build/rollup.Calculator_calculate_njs.js",
+    "build:Facet_getDisplayText.es": "npm run lint:Facet_getDisplayText.es && rollup -c build/rollup.Facet_getDisplayText_es.js",
+    "build:Facet_getDisplayText.njs": "npm run lint:Facet_getDisplayText.njs && rollup -c build/rollup.Facet_getDisplayText_njs.js",
+    "build": "npm run build:Calculator_calculate.es && npm run build:Calculator_calculate.njs && npm run build:Facet_getDisplayText.es && npm run build:Facet_getDisplayText.njs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mintjamsinc/cr6-api.git"
+  },
+  "keywords": [
+    "mintjams"
+  ],
+  "author": "MintJams Inc. <dev@mintjams.co.jp> (https://mintjams.jp/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mintjamsinc/cr6-api/issues"
+  },
+  "homepage": "https://github.com/mintjamsinc/cr6-api#readme",
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "rollup": "^2.56.1",
+    "rollup-plugin-terser": "^7.0.2"
+  }
+}
