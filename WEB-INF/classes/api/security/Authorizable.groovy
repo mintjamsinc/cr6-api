@@ -22,32 +22,32 @@ class Authorizable {
 	def with(jp.co.mintjams.osgi.service.jcr.security.UserManager.Authorizable authorizable) {
 		this.authorizable = authorizable;
 		if (authorizable) {
-    	    this.identifier = authorizable.name;
+			this.identifier = authorizable.name;
 		}
-	    return this;
+		return this;
 	}
 
 	def findByName(name) {
-	    this.identifier = name;
+		this.identifier = name;
 		with(context.repositorySession.userManager.getAuthorizable(name));
 		if (!authorizable) {
-		    return this;
+			return this;
 		}
 		def a = isGroup() ? Group.create(context) : User.create(context);
 		return a.with(authorizable);
 	}
 
 	def exists() {
-	    if (!authorizable) {
-	        return false;
-	    }
+		if (!authorizable) {
+			return false;
+		}
 		return true;
 	}
 
 	def getName() {
-	    if (!authorizable) {
-	        return null;
-	    }
+		if (!authorizable) {
+			return null;
+		}
 		return authorizable.name;
 	}
 
@@ -57,191 +57,191 @@ class Authorizable {
 
 	def getDeclaredMemberOf() {
 		return authorizable.declaredMemberOf().collect {
-		    Authorizable.create(context).with(it);
+			Authorizable.create(context).with(it);
 		}
 	}
 
 	def getMemberOf() {
 		return authorizable.memberOf().collect {
-		    Authorizable.create(context).with(it);
+			Authorizable.create(context).with(it);
 		}
 	}
 
- 	def contains(key) {
-	    return authorizable.hasProperty(key);
- 	}
-
-	def getBoolean(key, defaultValue = false) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).boolean;
+	def contains(key) {
+		return authorizable.hasProperty(key);
 	}
 
- 	def getBooleanArray(key, defaultValue = new boolean[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).booleanArray;
- 	}
+	def getBoolean(key, defaultValue = false) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).boolean;
+	}
 
- 	def getDate(key, defaultValue = new Date()) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).date.time;
- 	}
+	def getBooleanArray(key, defaultValue = new boolean[0]) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).booleanArray;
+	}
 
- 	def getDateArray(key, defaultValue = new Date[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).dateArray;
- 	}
+	def getDate(key, defaultValue = new Date()) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).date.time;
+	}
 
- 	def getDecimal(key, defaultValue = BigDecimal.ZERO) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).decimal;
- 	}
+	def getDateArray(key, defaultValue = new Date[0]) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).dateArray;
+	}
 
- 	def getDecimalArray(key, defaultValue = new BigDecimal[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).decimalArray;
- 	}
+	def getDecimal(key, defaultValue = BigDecimal.ZERO) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).decimal;
+	}
 
- 	def getDouble(key, defaultValue = 0) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).double;
- 	}
+	def getDecimalArray(key, defaultValue = new BigDecimal[0]) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).decimalArray;
+	}
 
- 	def getDoubleArray(key, defaultValue = new double[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).doubleArray;
- 	}
+	def getDouble(key, defaultValue = 0) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).double;
+	}
 
- 	def getLong(key, defaultValue = 0) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).long;
- 	}
+	def getDoubleArray(key, defaultValue = new double[0]) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).doubleArray;
+	}
 
- 	def getLongArray(key, defaultValue = new long[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).longArray;
- 	}
+	def getLong(key, defaultValue = 0) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).long;
+	}
 
- 	def getInt(key, defaultValue = 0) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).int;
- 	}
+	def getLongArray(key, defaultValue = new long[0]) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).longArray;
+	}
 
- 	def getIntArray(key, defaultValue = new int[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).intArray;
- 	}
+	def getInt(key, defaultValue = 0) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).int;
+	}
 
- 	def getString(key, defaultValue = "") {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).string;
- 	}
+	def getIntArray(key, defaultValue = new int[0]) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).intArray;
+	}
 
- 	def getStringArray(key, defaultValue = new String[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return authorizable.getProperty(key).stringArray;
- 	}
+	def getString(key, defaultValue = "") {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).string;
+	}
 
- 	def getByteArray(key, defaultValue = new byte[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    def value = authorizable.getProperty(key).string;
-	    if (!value.startsWith("{binary:")) {
-	        return defaultValue;
-	    }
-	    return value.substring(value.indexOf("}") + 1).decodeBase64();
- 	}
+	def getStringArray(key, defaultValue = new String[0]) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return authorizable.getProperty(key).stringArray;
+	}
 
- 	def getStream(key, defaultValue = new ByteArrayInputStream(new byte[0])) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    def value = authorizable.getProperty(key).string;
-	    if (!value.startsWith("{binary:")) {
-	        return defaultValue;
-	    }
-	    return new ByteArrayInputStream(value.substring(value.indexOf("}") + 1).decodeBase64());
- 	}
+	def getByteArray(key, defaultValue = new byte[0]) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		def value = authorizable.getProperty(key).string;
+		if (!value.startsWith("{binary:")) {
+			return defaultValue;
+		}
+		return value.substring(value.indexOf("}") + 1).decodeBase64();
+	}
 
- 	def getBinaryType(key) {
-	    if (!contains(key)) {
-	        throw new IllegalArgumentException(key);
-	    }
-	    def value = authorizable.getProperty(key).string;
-	    if (!value.startsWith("{binary:")) {
-	        throw new IllegalArgumentException(key);
-	    }
-	    def h = value.substring(0, value.indexOf("}") + 1);
-	    return h.substring("{binary:".length(), h.lastIndexOf(":"));
- 	}
+	def getStream(key, defaultValue = new ByteArrayInputStream(new byte[0])) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		def value = authorizable.getProperty(key).string;
+		if (!value.startsWith("{binary:")) {
+			return defaultValue;
+		}
+		return new ByteArrayInputStream(value.substring(value.indexOf("}") + 1).decodeBase64());
+	}
 
- 	def getBinaryLength(key) {
-	    if (!contains(key)) {
-	        throw new IllegalArgumentException(key);
-	    }
-	    def value = authorizable.getProperty(key).string;
-	    if (!value.startsWith("{binary:")) {
-	        throw new IllegalArgumentException(key);
-	    }
-	    def h = value.substring(0, value.indexOf("}") + 1);
-	    return h.substring(h.lastIndexOf(":") + 1, h.length() - 1) as long;
- 	}
+	def getBinaryType(key) {
+		if (!contains(key)) {
+			throw new IllegalArgumentException(key);
+		}
+		def value = authorizable.getProperty(key).string;
+		if (!value.startsWith("{binary:")) {
+			throw new IllegalArgumentException(key);
+		}
+		def h = value.substring(0, value.indexOf("}") + 1);
+		return h.substring("{binary:".length(), h.lastIndexOf(":"));
+	}
 
- 	def setAttribute(key, value) {
-	    authorizable.setProperty(key, value);
-	    return this;
- 	}
+	def getBinaryLength(key) {
+		if (!contains(key)) {
+			throw new IllegalArgumentException(key);
+		}
+		def value = authorizable.getProperty(key).string;
+		if (!value.startsWith("{binary:")) {
+			throw new IllegalArgumentException(key);
+		}
+		def h = value.substring(0, value.indexOf("}") + 1);
+		return h.substring(h.lastIndexOf(":") + 1, h.length() - 1) as long;
+	}
 
- 	def setAttribute(String key, String value, boolean mask) {
- 	    if (value instanceof byte[]) {
-    	    authorizable.setProperty(key, "{binary:application/octet-stream:" + value.length + "}" + value.encodeBase64().toString(), mask);
-    	    return this;
- 	    }
+	def setAttribute(key, value) {
+		authorizable.setProperty(key, value);
+		return this;
+	}
 
-	    authorizable.setProperty(key, value, mask);
-	    return this;
- 	}
+	def setAttribute(String key, String value, boolean mask) {
+		authorizable.setProperty(key, value, mask);
+		return this;
+	}
 
- 	def setAttribute(String key, byte[] value, String mimeType) {
-	    authorizable.setProperty(key, "{binary:" + mimeType + ":" + value.length + "}" + value.encodeBase64().toString());
-	    return this;
- 	}
+	def setAttribute(String key, String[] value, boolean mask) {
+		authorizable.setProperty(key, value, mask);
+		return this;
+	}
 
- 	def removeAttribute(key) {
-	    if (!contains(key)) {
-	        return this;
-	    }
-	    authorizable.getProperty(key).remove();
-	    return this;
- 	}
+	def setAttribute(String key, byte[] value, String mimeType = "application/octet-stream") {
+		authorizable.setProperty(key, "{binary:" + mimeType + ":" + value.length + "}" + value.encodeBase64().toString());
+		return this;
+	}
+
+	def removeAttribute(key) {
+		if (!contains(key)) {
+			return this;
+		}
+		authorizable.getProperty(key).remove();
+		return this;
+	}
 
 	def remove() {
 		authorizable.remove();
@@ -249,12 +249,12 @@ class Authorizable {
 	}
 
 	Object toObject() {
-	    if (!exists()) {
-	        return [
-    			"id": identifier,
-    			"exists": false
-            ];
-	    }
+		if (!exists()) {
+			return [
+				"id": identifier,
+				"exists": false
+			];
+		}
 
 		def o = [
 			"id" : authorizable.name,
@@ -326,15 +326,23 @@ class Authorizable {
 				}
 			} else if (p.typeName == "String") {
 				if (!p.isMultiple()) {
-				    if (!p.value.startsWith("{binary:")) {
-    					prop.value = p.value;
-				    }
+					if (!p.value.startsWith("{binary:")) {
+						prop.value = p.value;
+						if (p.isMasked()) {
+							prop.value = Session.create(context).mask(p.value);
+							prop.isMasked = true;
+						}
+					}
 				} else {
 					prop.value = p.values.collect { v ->
-    				    if (v.startsWith("{binary:")) {
-        					return "";
-    				    }
-    					return v;
+						if (v.startsWith("{binary:")) {
+							return "";
+						}
+						if (p.isMasked()) {
+							v = Session.create(context).mask(v);
+							prop.isMasked = true;
+						}
+						return v;
 					}
 				}
 			} else {

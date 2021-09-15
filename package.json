@@ -1,6 +1,6 @@
 {
   "name": "@mintjamsinc/cr6-api",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A set of APIs pre-installed in MintJams Content Repository 6.x.",
   "main": "index.js",
   "scripts": {

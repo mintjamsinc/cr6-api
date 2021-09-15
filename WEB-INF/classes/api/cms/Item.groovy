@@ -45,30 +45,30 @@ class Item {
 	}
 
 	def getIdentifier() {
-	    if (!resource) {
-	        return null;
-	    }
+		if (!resource) {
+			return null;
+		}
 		return resource.identifier;
 	}
 
 	def getName() {
-	    if (!resource) {
-	        return null;
-	    }
+		if (!resource) {
+			return null;
+		}
 		return resource.name;
 	}
 
 	def getPath() {
-	    if (!resource) {
-	        return null;
-	    }
+		if (!resource) {
+			return null;
+		}
 		return resource.path;
 	}
 
 	def exists() {
-	    if (!resource) {
-	        return false;
-	    }
+		if (!resource) {
+			return false;
+		}
 		return resource.exists();
 	}
 
@@ -80,170 +80,170 @@ class Item {
 		return Item.create(context).with(resource.getResource(relPath));
 	}
 
-    def mkdirs() {
-    	if (resource.exists()) {
-    		return;
-    	}
-    
-    	if (!resource.parent.exists()) {
-            Item.create(context).with(resource.parent).mkdirs();
-    	}
-    
-    	resource.createFolder();
-        return this;
-    }
+	def mkdirs() {
+		if (resource.exists()) {
+			return;
+		}
+	
+		if (!resource.parent.exists()) {
+			Item.create(context).with(resource.parent).mkdirs();
+		}
+	
+		resource.createFolder();
+		return this;
+	}
 
-    def createNewFile() {
-        Item.create(context).with(resource.parent).mkdirs();
-    	return with(resource.createFile().allowAnyProperties());
-    }
+	def createNewFile() {
+		Item.create(context).with(resource.parent).mkdirs();
+		return with(resource.createFile().allowAnyProperties());
+	}
 
-    def allowAnyProperties() {
-        resource.allowAnyProperties();
-        return this;
-    }
+	def allowAnyProperties() {
+		resource.allowAnyProperties();
+		return this;
+	}
 
 	def list() {
 		def l = [];
 		for (r in resource.list()) {
-		    l.add(Item.create(context).with(r));
+			l.add(Item.create(context).with(r));
 		}
 		return l;
 	}
 
 	def isCollection() {
-        return resource.isCollection();
+		return resource.isCollection();
 	}
 
 	def getContent() {
-        return current.resource.content;
+		return current.resource.content;
 	}
 
 	def getContentAsReader() {
-        return current.resource.contentAsReader;
+		return current.resource.contentAsReader;
 	}
 
 	def getContentAsStream() {
-        return current.resource.contentAsStream;
+		return current.resource.contentAsStream;
 	}
 
 	def getContentAsByteArray() {
-        return current.resource.contentAsByteArray;
+		return current.resource.contentAsByteArray;
 	}
 
 	def setContent(value) {
-        resource.write(value);
-        return this;
+		resource.write(value);
+		return this;
 	}
 
-    def getContentType() {
-        return current.resource.contentType;
-    }
+	def getContentType() {
+		return current.resource.contentType;
+	}
 
-    def setContentType(type) {
-        resource.setProperty("jcr:mimeType", type);
-        return this;
-    }
+	def setContentType(type) {
+		resource.setProperty("jcr:mimeType", type);
+		return this;
+	}
 
-    def getContentEncoding() {
-        return current.resource.contentEncoding;
-    }
+	def getContentEncoding() {
+		return current.resource.contentEncoding;
+	}
 
-    def getContentLength() {
-        return current.resource.contentLength;
-    }
+	def getContentLength() {
+		return current.resource.contentLength;
+	}
 
 	def getCreated() {
-        return resource.created;
+		return resource.created;
 	}
 
 	def getLastModified() {
-        return current.resource.lastModified;
+		return current.resource.lastModified;
 	}
 
 	def getCreatedBy() {
-        return resource.createdBy;
+		return resource.createdBy;
 	}
 
 	def getLastModifiedBy() {
-        return current.resource.lastModifiedBy;
+		return current.resource.lastModifiedBy;
 	}
 
 	def isVersionControlled() {
-        return resource.isVersionControlled();
+		return resource.isVersionControlled();
 	}
 
 	def isCheckedOut() {
-        return resource.isCheckedOut();
+		return resource.isCheckedOut();
 	}
 
 	def addVersionControl() {
-        resource.addVersionControl();
-        return this;
+		resource.addVersionControl();
+		return this;
 	}
 
 	def checkout() {
-        resource.checkout();
-        return this;
+		resource.checkout();
+		return this;
 	}
 
 	def checkin() {
-        return Version.create(context).with(resource.checkin());
+		return Version.create(context).with(resource.checkin());
 	}
 
 	def checkpoint() {
-        return Version.create(context).with(resource.checkpoint());
+		return Version.create(context).with(resource.checkpoint());
 	}
 
 	def getBaseVersion() {
-        return Version.create(context).with(resource.baseVersion);
+		return Version.create(context).with(resource.baseVersion);
 	}
 
-    def getCurrent() {
+	def getCurrent() {
 		if (resource.isCollection()) {
-		    return this;
+			return this;
 		}
 		if (resource instanceof jp.co.mintjams.osgi.service.jcr.FrozenResource) {
-		    return this;
+			return this;
 		}
-        if (currentItem) {
-            return currentItem;
-        }
+		if (currentItem) {
+			return currentItem;
+		}
 
 		try {
 			if (isVersionControlled() && isCheckedOut() && isLocked()) {
 				if (isLocked() && (lockedBy == context.repositorySession.userID)) {
-            		currentItem = this;
+					currentItem = this;
 				} else {
-            		currentItem = baseVersion.frozen;
+					currentItem = baseVersion.frozen;
 				}
 			}
 		} catch (java.lang.UnsupportedOperationException ignore) {
-    		currentItem = this;
+			currentItem = this;
 		}
 		if (!currentItem) {
-		    currentItem = this;
+			currentItem = this;
 		}
 		return currentItem;
-    }
+	}
 
 	def getVersionHistory() {
-        return VersionHistory.create(context).with(resource.versionHistory);
+		return VersionHistory.create(context).with(resource.versionHistory);
 	}
 
 	def isReferenceable() {
-        return resource.isReferenceable();
+		return resource.isReferenceable();
 	}
 
-    def addReferenceable() {
-        resource.addReferenceable();
+	def addReferenceable() {
+		resource.addReferenceable();
 		return this;
-    }
+	}
 
-    def removeReferenceable() {
-        resource.removeReferenceable();
+	def removeReferenceable() {
+		resource.removeReferenceable();
 		return this;
-    }
+	}
 
 	def isLocked() {
 		return resource.isLocked();
@@ -258,198 +258,203 @@ class Item {
 	}
 
 	def lock() {
-        resource.lock();
+		resource.lock();
 		return this;
 	}
 
 	def lock(isDeep) {
-        resource.lock(isDeep);
+		resource.lock(isDeep);
 		return this;
 	}
 
 	def lock(isDeep, isSessionScoped) {
-        resource.lock(isDeep, isSessionScoped);
+		resource.lock(isDeep, isSessionScoped);
 		return this;
 	}
 
 	def unlock() {
-        resource.unlock();
+		resource.unlock();
 		return this;
 	}
 
  	def contains(key) {
-	    return current.resource.hasProperty(key);
+		return current.resource.hasProperty(key);
  	}
 
 	def getBoolean(key, defaultValue = false) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).boolean;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).boolean;
 	}
 
  	def getBooleanArray(key, defaultValue = new boolean[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).booleanArray;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).booleanArray;
  	}
 
  	def getDate(key, defaultValue = new Date()) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).date.time;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).date.time;
  	}
 
  	def getDateArray(key, defaultValue = new Date[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).dateArray;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).dateArray;
  	}
 
  	def getDecimal(key, defaultValue = BigDecimal.ZERO) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).decimal;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).decimal;
  	}
 
  	def getDecimalArray(key, defaultValue = new BigDecimal[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).decimalArray;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).decimalArray;
  	}
 
  	def getDouble(key, defaultValue = 0) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).double;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).double;
  	}
 
  	def getDoubleArray(key, defaultValue = new double[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).doubleArray;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).doubleArray;
  	}
 
  	def getLong(key, defaultValue = 0) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).long;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).long;
  	}
 
  	def getLongArray(key, defaultValue = new long[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).longArray;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).longArray;
  	}
 
  	def getInt(key, defaultValue = 0) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).int;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).int;
  	}
 
  	def getIntArray(key, defaultValue = new int[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).intArray;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).intArray;
  	}
 
  	def getString(key, defaultValue = "") {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).string;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).string;
  	}
 
  	def getStringArray(key, defaultValue = new String[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).stringArray;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).stringArray;
  	}
 
  	def getByteArray(key, defaultValue = new byte[0]) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).byteArray;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).byteArray;
  	}
 
  	def getStream(key, defaultValue = new ByteArrayInputStream(new byte[0])) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
-	    return current.resource.getProperty(key).stream;
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).stream;
  	}
 
 	def getReferencedItem(key, defaultValue = null) {
-	    if (!contains(key)) {
-	        return defaultValue;
-	    }
+		if (!contains(key)) {
+			return defaultValue;
+		}
 		return Item.create(context).with(current.resource.getProperty(key).resource);
 	}
 
 	def getTemplate(prefix, suffix) {
-	    def tmpl = context.templateResolver.getTemplate(resource, prefix, suffix);
-	    if (!tmpl) {
-	        return null;
-	    }
-	    return [
-	        "item": Item.create(context).with(tmpl.resource),
-	        "scriptExtension": tmpl.scriptExtension
-        ];
+		def tmpl = context.templateResolver.getTemplate(resource, prefix, suffix);
+		if (!tmpl) {
+			return null;
+		}
+		return [
+			"item": Item.create(context).with(tmpl.resource),
+			"scriptExtension": tmpl.scriptExtension
+		];
 	}
 
 	def getTemplate(suffix) {
-	    def tmpl = context.templateResolver.getTemplate(resource, suffix);
-	    if (!tmpl) {
-	        return null;
-	    }
-	    return [
-	        "item": Item.create(context).with(tmpl.resource),
-	        "scriptExtension": tmpl.scriptExtension
-        ];
+		def tmpl = context.templateResolver.getTemplate(resource, suffix);
+		if (!tmpl) {
+			return null;
+		}
+		return [
+			"item": Item.create(context).with(tmpl.resource),
+			"scriptExtension": tmpl.scriptExtension
+		];
 	}
 
  	def setAttribute(key, value) {
-	    resource.setProperty(key, value);
-	    return this;
+		resource.setProperty(key, value);
+		return this;
  	}
 
  	def setAttribute(String key, String value, boolean mask) {
-	    resource.setProperty(key, value, mask);
-	    return this;
+		resource.setProperty(key, value, mask);
+		return this;
  	}
 
  	def setAttribute(String key, String[] value, boolean mask) {
-	    resource.setProperty(key, value, mask);
-	    return this;
+		resource.setProperty(key, value, mask);
+		return this;
  	}
 
+	def setAttribute(String key, byte[] value, String mimeType = "application/octet-stream") {
+		resource.setProperty(key, "{binary:" + mimeType + ":" + value.length + "}" + value.encodeBase64().toString());
+		return this;
+	}
+
  	def removeAttribute(key) {
-	    if (!contains(key)) {
-	        return this;
-	    }
-	    resource.getProperty(key).remove();
-	    return this;
+		if (!contains(key)) {
+			return this;
+		}
+		resource.getProperty(key).remove();
+		return this;
  	}
 
 	def getDisplayText(key) {
-	    if (!facet) {
-	        facet = new Facet(this);
-	    }
-	    return facet.getDisplayText(key, locale);
+		if (!facet) {
+			facet = new Facet(this);
+		}
+		return facet.getDisplayText(key, locale);
 	}
 
 	def asScript() {
@@ -458,37 +463,37 @@ class Item {
 	}
 
 	def canRead() {
-	    if (!resource) {
-	        return false;
-	    }
+		if (!resource) {
+			return false;
+		}
 		return resource.canRead();
 	}
 
 	def canWrite() {
-	    if (!resource) {
-	        return false;
-	    }
+		if (!resource) {
+			return false;
+		}
 		return resource.canWrite();
 	}
 
 	def canReadACL() {
-	    if (!resource) {
-	        return false;
-	    }
+		if (!resource) {
+			return false;
+		}
 		return resource.canReadACL();
 	}
 
 	def canWriteACL() {
-	    if (!resource) {
-	        return false;
-	    }
+		if (!resource) {
+			return false;
+		}
 		return resource.canWriteACL();
 	}
 
 	def canRemove() {
-	    if (!resource) {
-	        return false;
-	    }
+		if (!resource) {
+			return false;
+		}
 		return resource.canRemove();
 	}
 
@@ -502,10 +507,10 @@ class Item {
 	}
 
 	def calculate() {
-	    if (isCollection()) {
-    		return this;
-	    }
-	    Calculator.create(context).with(this).calculate();
+		if (isCollection()) {
+			return this;
+		}
+		Calculator.create(context).with(this).calculate();
 		return this;
 	}
 
@@ -515,13 +520,13 @@ class Item {
 	}
 
 	def toObject(exportsBinary = false) {
-	    if (!exists()) {
-	        return [
-    			"name": resource.name,
-    			"path": resource.path,
-    			"exists": false
-            ];
-	    }
+		if (!exists()) {
+			return [
+				"name": resource.name,
+				"path": resource.path,
+				"exists": false
+			];
+		}
 
 		def o = [
 			"id": identifier,
@@ -600,9 +605,9 @@ class Item {
 				}
 
 				if (p.typeName == "Binary") {
-				    if (exportsBinary) {
-        				prop.value = p.getByteArray().encodeBase64().toString();
-				    }
+					if (exportsBinary) {
+						prop.value = p.getByteArray().encodeBase64().toString();
+					}
 				} else if (p.typeName == "Reference" || p.typeName == "WeakReference" || p.typeName == "Path") {
 					try {
 						prop.value = Item.create(context).with(p.resource).toObject();
@@ -616,6 +621,20 @@ class Item {
 						prop.value = [];
 						for (def d : p.getValues()) {
 							prop.value.add(ISO8601.formatDate(d));
+						}
+					}
+				} else if (p.typeName == "String") {
+					if (!p.isMultiple()) {
+						prop.value = p.value;
+						if (p.isMasked()) {
+							prop.value = Session.create(context).mask(p.value);
+						}
+					} else {
+						prop.value = p.values.collect { v ->
+							if (p.isMasked()) {
+								v = Session.create(context).mask(v);
+							}
+							return v;
 						}
 					}
 				} else {
