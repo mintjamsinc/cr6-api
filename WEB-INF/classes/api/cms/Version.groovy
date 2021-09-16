@@ -24,70 +24,70 @@ class Version {
 	}
 
 	def getName() {
-	    return version.name;
+		return version.name;
 	}
 
 	def getContainingHistory() {
-	    return VersionHistory.create(context).with(version.containingHistory);
+		return VersionHistory.create(context).with(version.containingHistory);
 	}
 
 	def getCreated() {
-	    return version.created;
+		return version.created;
 	}
 
 	def getCreatedBy() {
-	    return version.frozen.createdBy;
+		return version.frozen.createdBy;
 	}
 
 	def getFrozen() {
-	    return Item.create(context).with(version.frozen);
+		return Item.create(context).with(version.frozen);
 	}
 
 	def getLinearPredecessor() {
-	    return Version.create(context).with(version.linearPredecessor);
+		return Version.create(context).with(version.linearPredecessor);
 	}
 
 	def getLinearSuccessor() {
-	    return Version.create(context).with(version.linearSuccessor);
+		return Version.create(context).with(version.linearSuccessor);
 	}
 
 	def getPredecessors() {
-	    def l = [];
-	    version.predecessors.each { e ->
-	        l.add(Version.create(context).with(e));
-	    }
-	    return l;
+		def l = [];
+		version.predecessors.each { e ->
+			l.add(Version.create(context).with(e));
+		}
+		return l;
 	}
 
 	def getSuccessors() {
-	    def l = [];
-	    version.successors.each { e ->
-	        l.add(Version.create(context).with(e));
-	    }
-	    return l;
+		def l = [];
+		version.successors.each { e ->
+			l.add(Version.create(context).with(e));
+		}
+		return l;
 	}
 
 	def getLabels() {
-	    return version.labels;
+		return version.labels;
 	}
 
 	def hasLabel(label) {
-	    return version.hasLabel(label);
+		return version.hasLabel(label);
 	}
 
 	def addLabel(label, moveLabel) {
-	    version.addLabel(label, moveLabel);
-	    return this;
+		version.addLabel(label, moveLabel);
+		return this;
 	}
 
 	def remove() {
-	    version.remove();
-	    return this;
+		version.remove();
+		return this;
 	}
 
 	def restore() {
-	    version.restore();
-	    return this;
+		version.restore();
+		return this;
 	}
 
 	def toObject() {

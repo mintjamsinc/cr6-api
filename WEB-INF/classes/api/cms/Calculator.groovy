@@ -25,7 +25,7 @@ class Calculator {
 
 	def calculate() {
 		if (!item) {
-		    throw new java.lang.IllegalStateException("item");
+			throw new java.lang.IllegalStateException("item");
 		}
 
 		def arguments = [
@@ -35,13 +35,13 @@ class Calculator {
 
 		def ScriptAPI = context.getAttribute("ScriptAPI");
 		def resourceResolver = context.repositorySession.resourceResolver;
-        def scriptExtension;
+		def scriptExtension;
 		if (context.scriptEngineManager.getEngineByExtension("njs")) {
-		    scriptExtension = "njs";
+			scriptExtension = "njs";
 		} else {
-		    scriptExtension = "es";
+			scriptExtension = "es";
 		}
-		def scriptResource = resourceResolver.getResource("/WEB-INF/classes/api/cms/Calculator_calculate." + scriptExtension);
+		def scriptResource = context.resourceResolver.getResource("/WEB-INF/classes/api/cms/Calculator_calculate." + scriptExtension);
 		def resultJson = ScriptAPI.createScript(scriptResource)
 			.setAsync(false)
 			.setAttribute("parametersJson", JSON.stringify(arguments))
@@ -51,7 +51,7 @@ class Calculator {
 			return;
 		}
 
-	    ItemHelper.create(context).with(item).importAttributes(properties);
+		ItemHelper.create(context).with(item).importAttributes(properties);
 	}
 
 	def getFacetDefinitions() {

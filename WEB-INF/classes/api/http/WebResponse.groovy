@@ -27,77 +27,77 @@ class WebResponse {
 		return this;
 	}
 
-    def getHeaderNames() {
-        return response.getHeaderNames().toList();
-    }
+	def getHeaderNames() {
+		return response.getHeaderNames().toList();
+	}
 
-    def containsHeader(name) {
-        return response.containsHeader(name);
-    }
+	def containsHeader(name) {
+		return response.containsHeader(name);
+	}
 
-    def getHeaders(name) {
-        return response.getHeaders(name).toList();
-    }
+	def getHeaders(name) {
+		return response.getHeaders(name).toList();
+	}
 
-    def getHeader(name) {
-        return response.getHeader(name);
-    }
+	def getHeader(name) {
+		return response.getHeader(name);
+	}
 
-    def getIntHeader(name) {
-        return response.getIntHeader(name);
-    }
+	def getIntHeader(name) {
+		return response.getIntHeader(name);
+	}
 
-    def getDateHeader(name) {
-        return response.getDateHeader(name);
-    }
+	def getDateHeader(name) {
+		return response.getDateHeader(name);
+	}
 
-    def setHeader(name, value) {
-        if (value instanceof Number ||
-            value instanceof int ||
-            value instanceof long ||
-            value instanceof float ||
-            value instanceof double) {
-            response.setIntHeader(name, value as int);
-        } else if (value instanceof Date) {
-            response.setDateHeader(name, value);
-        } else if (value instanceof String) {
-            response.setHeader(name, value as String);
-        } else if (value instanceof List) {
-            for (def i = 0; i < value.size(); i++) {
-                def e = value.get(i);
-                if (i == 0) {
-                    setHeader(name, e);
-                } else {
-                    addHeader(name, e);
-                }
-            }
-        } else {
-            throw new IllegalArgumentException("Invalid value: " + value.class.name);
-        }
-        return this;
-    }
+	def setHeader(name, value) {
+		if (value instanceof Number ||
+			value instanceof int ||
+			value instanceof long ||
+			value instanceof float ||
+			value instanceof double) {
+			response.setIntHeader(name, value as int);
+		} else if (value instanceof Date) {
+			response.setDateHeader(name, value);
+		} else if (value instanceof String) {
+			response.setHeader(name, value as String);
+		} else if (value instanceof List) {
+			for (def i = 0; i < value.size(); i++) {
+				def e = value.get(i);
+				if (i == 0) {
+					setHeader(name, e);
+				} else {
+					addHeader(name, e);
+				}
+			}
+		} else {
+			throw new IllegalArgumentException("Invalid value: " + value.class.name);
+		}
+		return this;
+	}
 
-    def addHeader(name, value) {
-        if (value instanceof Number ||
-            value instanceof int ||
-            value instanceof long ||
-            value instanceof float ||
-            value instanceof double) {
-            response.addIntHeader(name, value as int);
-        } else if (value instanceof Date) {
-            response.addDateHeader(name, value);
-        } else if (value instanceof String) {
-            response.addHeader(name, value as String);
-        } else if (value instanceof List) {
-            for (def i = 0; i < value.size(); i++) {
-                def e = value.get(i);
-                addHeader(name, e);
-            }
-        } else {
-            throw new IllegalArgumentException("Invalid value: " + value.class.name);
-        }
-        return this;
-    }
+	def addHeader(name, value) {
+		if (value instanceof Number ||
+			value instanceof int ||
+			value instanceof long ||
+			value instanceof float ||
+			value instanceof double) {
+			response.addIntHeader(name, value as int);
+		} else if (value instanceof Date) {
+			response.addDateHeader(name, value);
+		} else if (value instanceof String) {
+			response.addHeader(name, value as String);
+		} else if (value instanceof List) {
+			for (def i = 0; i < value.size(); i++) {
+				def e = value.get(i);
+				addHeader(name, e);
+			}
+		} else {
+			throw new IllegalArgumentException("Invalid value: " + value.class.name);
+		}
+		return this;
+	}
 
 	WebResponse setContentType(String type) {
 		response.setContentType(type);
@@ -226,8 +226,8 @@ class WebResponse {
 	}
 
 	def addCookie(Cookie cookie) {
-	    response.addCookie(cookie);
-	    return this;
+		response.addCookie(cookie);
+		return this;
 	}
 
 	def sendError(throwable) {

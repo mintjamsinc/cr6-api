@@ -24,41 +24,41 @@ class Deployment {
 	}
 
 	def findByIdentifier(id) {
-	    def ProcessAPI = context.getAttribute("ProcessAPI");
-	    try {
-    		return with(ProcessAPI.engine.repositoryService.createDeploymentQuery()
-    			.deploymentId(id)
-    			.singleResult());
-	    } catch (Throwable ignore) {}
-	    return this;
+		def ProcessAPI = context.getAttribute("ProcessAPI");
+		try {
+			return with(ProcessAPI.engine.repositoryService.createDeploymentQuery()
+				.deploymentId(id)
+				.singleResult());
+		} catch (Throwable ignore) {}
+		return this;
 	}
 
-    def exists() {
-        return (deployment != null);
-    }
+	def exists() {
+		return (deployment != null);
+	}
 
-    def getIdentifier() {
-        return deployment.id;
-    }
+	def getIdentifier() {
+		return deployment.id;
+	}
 
-    def getName() {
-        return deployment.name;
-    }
+	def getName() {
+		return deployment.name;
+	}
 
-    def getSource() {
-        return deployment.source;
-    }
+	def getSource() {
+		return deployment.source;
+	}
 
-    def getDeploymentTime() {
-        return deployment.deploymentTime;
-    }
+	def getDeploymentTime() {
+		return deployment.deploymentTime;
+	}
 
 	def toObject() {
-	    if (!exists()) {
-    		return [
-    			"exists": false
-    		];
-	    }
+		if (!exists()) {
+			return [
+				"exists": false
+			];
+		}
 
 		def o = [
 			"deploymentTime": ISO8601.formatDate(getDeploymentTime()),

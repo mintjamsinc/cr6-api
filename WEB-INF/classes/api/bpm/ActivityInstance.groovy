@@ -24,54 +24,54 @@ class ActivityInstance {
 		return this;
 	}
 
-    def exists() {
-        return (activityInstance != null);
-    }
+	def exists() {
+		return (activityInstance != null);
+	}
 
-    def getIdentifier() {
-        return activityInstance.activityId;
-    }
+	def getIdentifier() {
+		return activityInstance.activityId;
+	}
 
-    def getName() {
-        return activityInstance.activityName;
-    }
+	def getName() {
+		return activityInstance.activityName;
+	}
 
-    def getType() {
-        return activityInstance.activityType;
-    }
+	def getType() {
+		return activityInstance.activityType;
+	}
 
-    def getChildActivityInstances() {
+	def getChildActivityInstances() {
 		return activityInstance.childActivityInstances.collect {
-		    ActivityInstance.create(context).with(it);
+			ActivityInstance.create(context).with(it);
 		}
-    }
+	}
 
-    def getExecutionIds() {
+	def getExecutionIds() {
 		return activityInstance.executionIds;
-    }
+	}
 
 	def getProcessDefinition() {
-	    if (!processDefinition) {
-    	    processDefinition = ProcessDefinition.create(context).findByIdentifier(activityInstance.processDefinitionId);
-	    }
+		if (!processDefinition) {
+			processDefinition = ProcessDefinition.create(context).findByIdentifier(activityInstance.processDefinitionId);
+		}
 		return processDefinition;
 	}
 
 	def getProcessInstance() {
-	    if (!processInstance) {
-    	    processInstance = ProcessInstance.create(context).findByIdentifier(activityInstance.processInstanceId);
-	    }
+		if (!processInstance) {
+			processInstance = ProcessInstance.create(context).findByIdentifier(activityInstance.processInstanceId);
+		}
 		return processInstance;
 	}
 
 	def toObject() {
-	    if (!exists()) {
-    		return [
-    			"exists": false
-    		];
-	    }
+		if (!exists()) {
+			return [
+				"exists": false
+			];
+		}
 
-	    def ProcessAPI = context.getAttribute("ProcessAPI");
+		def ProcessAPI = context.getAttribute("ProcessAPI");
 		def o = [
 			"id": getIdentifier(),
 			"name": getName(),
@@ -81,7 +81,7 @@ class ActivityInstance {
 			"exists": true
 		];
 
-        getChildActivityInstances().each { a ->
+		getChildActivityInstances().each { a ->
 			o.childActivityInstances.add(a.toObject());
 		}
 

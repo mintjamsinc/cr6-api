@@ -7,6 +7,6 @@ class ReferencedItemNotFoundException extends java.lang.RuntimeException {
 	def path;
 
 	ReferencedItemNotFoundException(message) {
-	    super(message);
+		super(message);
 	}
 }

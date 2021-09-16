@@ -28,54 +28,54 @@ class VersionHistory {
 // 	Iterator<Resource> getAllLinearFrozenNodes() throws JcrException;
 
 	def getAllLinearVersions() {
-	    return versionHistory.allLinearVersions.collect {
-            Version.create(context).with(it);
-	    }
+		return versionHistory.allLinearVersions.collect {
+			Version.create(context).with(it);
+		}
 	}
 
 	def getAllVersions() {
-	    return versionHistory.allVersions.collect {
-            Version.create(context).with(it);
-	    }
+		return versionHistory.allVersions.collect {
+			Version.create(context).with(it);
+		}
 	}
 
 	def getRootVersion() {
-        return Version.create(context).with(versionHistory.rootVersion);
+		return Version.create(context).with(versionHistory.rootVersion);
 	}
 
 	def getVersion(versionName) {
-        return Version.create(context).with(versionHistory.getVersion(versionName));
+		return Version.create(context).with(versionHistory.getVersion(versionName));
 	}
 
 	def getVersionByLabel(label) {
-        return Version.create(context).with(versionHistory.getVersionByLabel(label));
+		return Version.create(context).with(versionHistory.getVersionByLabel(label));
 	}
 
 	def getVersionLabels() {
-        return versionHistory.versionLabels;
+		return versionHistory.versionLabels;
 	}
 
 	def getVersionableIdentifier() {
-        return versionHistory.versionableIdentifier;
+		return versionHistory.versionableIdentifier;
 	}
 
 	def hasVersionLabel(label) {
-        return versionHistory.hasVersionLabel(label);
+		return versionHistory.hasVersionLabel(label);
 	}
 
 	def removeVersionLabel(label) {
-        versionHistory.removeVersionLabel(label);
-        return this;
+		versionHistory.removeVersionLabel(label);
+		return this;
 	}
 
 	def toObject() {
 		def o = [
-		    "versionableIdentifier": versionableIdentifier,
-		    "versionLabels": versionLabels,
-		    "versions": []
+			"versionableIdentifier": versionableIdentifier,
+			"versionLabels": versionLabels,
+			"versions": []
 		];
 		allVersions.each { version ->
-		    o.versions.add(version.toObject());
+			o.versions.add(version.toObject());
 		}
 
 		return o;

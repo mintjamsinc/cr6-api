@@ -23,18 +23,18 @@ class AccessControlEntry {
 	}
 
 	def getGrantee() {
-	    return Authorizable.create(context).with(accessControlEntry.principal);
+		return Authorizable.create(context).with(accessControlEntry.principal);
 	}
 
 	def isAllow() {
-	    return accessControlEntry.isAllow();
+		return accessControlEntry.isAllow();
 	}
 
-    def getPrivileges() {
-        return accessControlEntry.privileges.collect {
-		    Privilege.create(context).with(it);
-        }
-    }
+	def getPrivileges() {
+		return accessControlEntry.privileges.collect {
+			Privilege.create(context).with(it);
+		}
+	}
 
 	def toObject() {
 		def o = [
@@ -42,7 +42,7 @@ class AccessControlEntry {
 			"grantee": grantee.name,
 			"isAllow": isAllow(),
 			"privileges": privileges.collect {
-			    it.name;
+				it.name;
 			}
 		];
 

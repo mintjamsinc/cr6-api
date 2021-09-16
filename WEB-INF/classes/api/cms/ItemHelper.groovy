@@ -27,8 +27,8 @@ class ItemHelper {
 		return this;
 	}
 
-    def importContent(o, mimeType = "application/octet-stream") {
-        def MimeTypeAPI = context.getAttribute("MimeTypeAPI");
+	def importContent(o, mimeType = "application/octet-stream") {
+		def MimeTypeAPI = context.getAttribute("MimeTypeAPI");
 		if (!mimeType || mimeType == "application/octet-stream") {
 			def type = MimeTypeAPI.getMimeType(item.name);
 			if (type) {
@@ -36,16 +36,16 @@ class ItemHelper {
 			}
 		}
 
-        if (o instanceof MultipartUpload) {
+		if (o instanceof MultipartUpload) {
 			item.setContent(o.file).setContentType(mimeType);
-            resetImageAttributes();
-        } else if (o instanceof java.io.InputStream) {
+			resetImageAttributes();
+		} else if (o instanceof java.io.InputStream) {
 			item.setContent(o).setContentType(mimeType);
-            resetImageAttributes();
-        }
+			resetImageAttributes();
+		}
 	}
 
-    def resetImageAttributes() {
+	def resetImageAttributes() {
 		item.removeAttribute("mi:thumbnail");
 		item.removeAttribute("mi:imageWidth");
 		item.removeAttribute("mi:imageHeight");
@@ -77,14 +77,14 @@ class ItemHelper {
 				item.setAttribute("mi:orientation", exifIFD0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION));
 			} catch (Throwable ex) {}
 		}
-    }
+	}
 
 	def importAttributes(properties) {
-	    if (properties instanceof Map) {
-	        properties = properties.collect { e ->
-	            return e.value;
-	        }
-	    }
+		if (properties instanceof Map) {
+			properties = properties.collect { e ->
+				return e.value;
+			}
+		}
 
 		for (prop in properties) {
 			def key = prop.key;
@@ -145,19 +145,19 @@ class ItemHelper {
 					item.setAttribute(key, value as Boolean);
 				}
 			} else if (type == "Reference" || type == "WeakReference" || type == "Path") {
-			    def rr;
+				def rr;
 				if (value.path) {
 					rr = context.resourceResolver.getResource(value.path);
 				} else {
 					rr = context.resourceResolver.getResourceByIdentifier(value.id);
 				}
 				if (!rr.exists()) {
-				    def ex = new ReferencedItemNotFoundException("Unable to import the item \"" + item.path + "\": The referenced item does not exist: " + (value.path ? "Path" : "Identifier") + "=" + (value.path ?: value.id));
-				    if (value.path) {
-				        ex.path = value.path;
-				    } else {
-				        ex.identifier = value.id;
-				    }
+					def ex = new ReferencedItemNotFoundException("Unable to import the item \"" + item.path + "\": The referenced item does not exist: " + (value.path ? "Path" : "Identifier") + "=" + (value.path ?: value.id));
+					if (value.path) {
+						ex.path = value.path;
+					} else {
+						ex.identifier = value.id;
+					}
 					throw ex;
 				}
 				item.setAttribute(key, rr);

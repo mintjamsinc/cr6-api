@@ -62,36 +62,36 @@ class WebRequest {
 	}
 
 	Cookie getCookie(name) {
-	    def cookies = request.cookies;
-	    if (cookies != null) {
-	        for (cookie in cookies) {
-	            if (cookie.name == name) {
-                    return cookie;
-	            }
-	        }
-	    }
-	    return null;
+		def cookies = request.cookies;
+		if (cookies != null) {
+			for (cookie in cookies) {
+				if (cookie.name == name) {
+					return cookie;
+				}
+			}
+		}
+		return null;
 	}
 
-    def getHeaderNames() {
-        return request.getHeaderNames().toList();
-    }
+	def getHeaderNames() {
+		return request.getHeaderNames().toList();
+	}
 
-    def getHeaders(name) {
-        return request.getHeaders(name).toList();
-    }
+	def getHeaders(name) {
+		return request.getHeaders(name).toList();
+	}
 
-    def getHeader(name) {
-        return request.getHeader(name);
-    }
+	def getHeader(name) {
+		return request.getHeader(name);
+	}
 
-    def getIntHeader(name) {
-        return request.getIntHeader(name);
-    }
+	def getIntHeader(name) {
+		return request.getIntHeader(name);
+	}
 
-    def getDateHeader(name) {
-        return request.getDateHeader(name);
-    }
+	def getDateHeader(name) {
+		return request.getDateHeader(name);
+	}
 
 	boolean hasRange() {
 		return !!request.getHeader("Range");

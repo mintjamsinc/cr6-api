@@ -23,27 +23,27 @@ class Privilege {
 	}
 
 	def getAggregatePrivileges() {
-	    return privilege.aggregatePrivileges.collect {
-		    Privilege.create(context).with(it);
-        }
+		return privilege.aggregatePrivileges.collect {
+			Privilege.create(context).with(it);
+		}
 	}
 
 	def getDeclaredAggregatePrivileges() {
-	    return privilege.declaredAggregatePrivileges.collect {
-		    Privilege.create(context).with(it);
-        }
+		return privilege.declaredAggregatePrivileges.collect {
+			Privilege.create(context).with(it);
+		}
 	}
 
 	def getName() {
-	    return privilege.name;
+		return privilege.name;
 	}
 
 	def isAbstract() {
-	    return privilege.isAbstract();
+		return privilege.isAbstract();
 	}
 
 	def isAggregate() {
-	    return privilege.isAggregate();
+		return privilege.isAggregate();
 	}
 
 	def toObject() {
