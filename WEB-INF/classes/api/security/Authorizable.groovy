@@ -216,21 +216,41 @@ class Authorizable {
 	}
 
 	def setAttribute(key, value) {
+		if (value == null) {
+			removeAttribute(key);
+			return this;
+		}
+
 		authorizable.setProperty(key, value);
 		return this;
 	}
 
 	def setAttribute(String key, String value, boolean mask) {
+		if (value == null) {
+			removeAttribute(key);
+			return this;
+		}
+
 		authorizable.setProperty(key, value, mask);
 		return this;
 	}
 
 	def setAttribute(String key, String[] value, boolean mask) {
+		if (value == null) {
+			removeAttribute(key);
+			return this;
+		}
+
 		authorizable.setProperty(key, value, mask);
 		return this;
 	}
 
 	def setAttribute(String key, byte[] value, String mimeType = "application/octet-stream") {
+		if (value == null) {
+			removeAttribute(key);
+			return this;
+		}
+
 		authorizable.setProperty(key, "{binary:" + mimeType + ":" + value.length + "}" + value.encodeBase64().toString());
 		return this;
 	}
