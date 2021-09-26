@@ -3,11 +3,11 @@
 package api.http;
 
 import api.util.Text;
-import groovy.json.JsonOutput;
+import api.util.JSON;
+import api.util.YAML;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
-import org.yaml.snakeyaml.Yaml;
 
 class WebResponse {
 	HttpServletResponse response;
@@ -53,10 +53,10 @@ class WebResponse {
 
 	def setHeader(name, value) {
 		if (value instanceof Number ||
-			value instanceof int ||
-			value instanceof long ||
-			value instanceof float ||
-			value instanceof double) {
+			Integer.class.isInstance(value) ||
+			Long.class.isInstance(value) ||
+			Float.class.isInstance(value) ||
+			Double.class.isInstance(value)) {
 			response.setIntHeader(name, value as int);
 		} else if (value instanceof Date) {
 			response.setDateHeader(name, value);
@@ -79,10 +79,10 @@ class WebResponse {
 
 	def addHeader(name, value) {
 		if (value instanceof Number ||
-			value instanceof int ||
-			value instanceof long ||
-			value instanceof float ||
-			value instanceof double) {
+			Integer.class.isInstance(value) ||
+			Long.class.isInstance(value) ||
+			Float.class.isInstance(value) ||
+			Double.class.isInstance(value)) {
 			response.addIntHeader(name, value as int);
 		} else if (value instanceof Date) {
 			response.addDateHeader(name, value);
@@ -201,13 +201,13 @@ class WebResponse {
 
 	WebResponse writeAsJson(Object value) {
 		setContentType("application/json");
-		write(JsonOutput.toJson(value));
+		write(JSON.stringify(value));
 		return this;
 	}
 
 	WebResponse writeAsYaml(Object value) {
 		setContentType("application/yaml");
-		write(new Yaml().dump(value));
+		write(YAML.stringify(value));
 		return this;
 	}
 
@@ -292,6 +292,6 @@ class WebResponse {
 
 		response.setStatus(resp.status);
 		response.setContentType("application/json");
-		response.getWriter().print(JsonOutput.toJson(resp));
+		response.getWriter().print(JSON.stringify(resp));
 	}
 }
