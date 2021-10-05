@@ -146,7 +146,6 @@ class ProcessDefinition {
 			];
 		}
 
-		def ProcessAPI = context.getAttribute("ProcessAPI");
 		def o = [
 			"id": getIdentifier(),
 			"key": getKey(),

@@ -150,7 +150,6 @@ class ProcessInstance {
 			];
 		}
 
-		def ProcessAPI = context.getAttribute("ProcessAPI");
 		def o = [
 			"id": getIdentifier(),
 			"isEnded": isEnded(),

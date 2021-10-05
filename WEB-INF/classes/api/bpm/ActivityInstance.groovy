@@ -71,7 +71,6 @@ class ActivityInstance {
 			];
 		}
 
-		def ProcessAPI = context.getAttribute("ProcessAPI");
 		def o = [
 			"id": getIdentifier(),
 			"name": getName(),
