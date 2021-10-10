@@ -14,21 +14,26 @@ class YAML {
 			return new Yaml().load(value);
 		}
 
-		if (value instanceof java.io.InputStream ||
-				value instanceof java.io.Reader) {
+		if (value instanceof java.io.InputStream) {
 			return value.withCloseable { vin ->
-				return new Yaml().load(vin);
+				return parse(vin.getText("UTF-8"));
+			}
+		}
+
+		if (value instanceof java.io.Reader) {
+			return value.withCloseable { vin ->
+				return parse(vin.text);
 			}
 		}
 
 		if (value instanceof jp.co.mintjams.osgi.service.jcr.Resource) {
 			return value.getContentAsReader().withCloseable { reader ->
-				return new Yaml().load(reader);
+				return parse(reader.text);
 			}
 		}
 
 		if (value instanceof File) {
-			return new Yaml().load(value.text);
+			return parse(value.getText("UTF-8"));
 		}
 
 		throw new IllegalArgumentException("Could not parse YAML text: Class: " + value.getClass().getName());

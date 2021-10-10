@@ -3,7 +3,7 @@
 package api.security;
 
 import api.util.ISO8601;
-import groovy.json.JsonOutput;
+import api.util.JSON;
 import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
 
 class Authorizable {
@@ -378,6 +378,6 @@ class Authorizable {
 	}
 
 	String toJson() {
-		return JsonOutput.toJson(toObject());
+		return JSON.stringify(toObject());
 	}
 }

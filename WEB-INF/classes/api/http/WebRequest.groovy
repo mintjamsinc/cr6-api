@@ -2,10 +2,10 @@
 
 package api.http;
 
-import groovy.json.JsonSlurper;
+import api.util.JSON;
+import api.util.YAML;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import org.yaml.snakeyaml.Yaml;
 
 class WebRequest {
 	HttpServletRequest request;
@@ -27,13 +27,13 @@ class WebRequest {
 
 		if (type == "application/json") {
 			return request.getReader().withCloseable { entity ->
-				return new JsonSlurper().parse(entity);
+				return JSON.parse(entity);
 			}
 		}
 
 		if (type == "application/yaml") {
 			return request.getReader().withCloseable { entity ->
-				return new Yaml().load(entity);
+				return YAML.parse(entity);
 			}
 		}
 

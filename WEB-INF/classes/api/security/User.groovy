@@ -2,7 +2,6 @@
 
 package api.security;
 
-import groovy.json.JsonOutput;
 import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
 
 class User extends Authorizable {
