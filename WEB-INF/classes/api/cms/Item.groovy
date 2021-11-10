@@ -2,6 +2,7 @@
 
 package api.cms;
 
+import api.security.Session;
 import api.util.ISO8601;
 import api.util.JSON;
 import java.io.ByteArrayInputStream; 
@@ -29,6 +30,10 @@ class Item {
 		currentItem = null;
 		facet = null;
 		return this;
+	}
+
+	def with(Item item) {
+		return with(item.resource);
 	}
 
 	def with(Locale locale) {
@@ -77,7 +82,7 @@ class Item {
 	}
 
 	def getItem(relPath) {
-		return Item.create(context).with(resource.getResource(relPath));
+		return Item.create(context).findByPath(path + "/" + relPath);
 	}
 
 	def mkdirs() {
@@ -86,7 +91,7 @@ class Item {
 		}
 	
 		if (!resource.parent.exists()) {
-			Item.create(context).with(resource.parent).mkdirs();
+			parent.mkdirs();
 		}
 	
 		resource.createFolder();
@@ -94,7 +99,7 @@ class Item {
 	}
 
 	def createNewFile() {
-		Item.create(context).with(resource.parent).mkdirs();
+		parent.mkdirs();
 		return with(resource.createFile().allowAnyProperties());
 	}
 
