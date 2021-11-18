@@ -82,7 +82,15 @@ class Item {
 	}
 
 	def getItem(relPath) {
-		return Item.create(context).findByPath(path.substring(0, path.lastIndexOf("/") + 1) + relPath);
+		def parentPath = path;
+		if (isCollection()) {
+			if (!parentPath.endsWith("/")) {
+				parentPath += "/";
+			}
+		} else {
+			parentPath = parentPath.substring(0, parentPath.lastIndexOf("/") + 1);
+		}
+		return Item.create(context).findByPath(parentPath + relPath);
 	}
 
 	def mkdirs() {
