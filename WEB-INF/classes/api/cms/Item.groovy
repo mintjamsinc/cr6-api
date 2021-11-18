@@ -82,7 +82,7 @@ class Item {
 	}
 
 	def getItem(relPath) {
-		return Item.create(context).findByPath(path + "/" + relPath);
+		return Item.create(context).findByPath(path.substring(0, path.lastIndexOf("/") + 1) + relPath);
 	}
 
 	def mkdirs() {
