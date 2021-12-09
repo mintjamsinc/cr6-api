@@ -2,12 +2,8 @@
 
 package api.security;
 
-import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
@@ -26,7 +22,7 @@ class Session {
 			def md = MessageDigest.getInstance("SHA-256");
 			md.update(id.getBytes("UTF-8"));
 			def keySpec = new PBEKeySpec(eTag.toCharArray(), md.digest(), 10240, 128);
-			this.key = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(keySpec);
+			this.key = new SecretKeySpec(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(keySpec).getEncoded(), "AES");
 			session.setAttribute("user.session.key", this.key);
 		}
 	}
@@ -44,17 +40,20 @@ class Session {
 	}
 
 	def mask(value) {
-		def data;
-		if (value instanceof String) {
-			data = value.getBytes("UTF-8");
-		} else {
-			data = value as byte[];
+		if (value == null) {
+			return null;
 		}
-		def cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-		cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key.getEncoded(), "AES"));
-		def out = new ByteArrayOutputStream();
- 		out.write(cipher.getParameters().getParameterSpec(IvParameterSpec.class).getIV());
- 		out.write(cipher.doFinal(data));
-		return "{AES}" + out.toByteArray().encodeBase64();
+
+		def CryptoAPI = context.getAttribute("CryptoAPI");
+		return CryptoAPI.newEncryptor().setSecretKey(key).encrypt(value);
+	}
+
+	def unmask(value) {
+		if (value == null) {
+			return null;
+		}
+
+		def CryptoAPI = context.getAttribute("CryptoAPI");
+		return CryptoAPI.newDecryptor().setSecretKey(key).decrypt(value);
 	}
 }
