@@ -17,6 +17,7 @@ class Exporter {
 	def dataFile;
 	def statusFile;
 	def status;
+	def statusMonitor;
 
 	Exporter(context) {
 		this.context = context;
@@ -26,10 +27,9 @@ class Exporter {
 		return new Exporter(context);
 	}
 
-	def execute(String[] absPaths, boolean noMetadata) {
+	def prepare(String[] absPaths, boolean noMetadata) {
 		dataFile = File.createTempFile("export-", ".data");
 		dataFile.deleteOnExit();
-
 		def identifier = {
 			def id = dataFile.name;
 			id = id.substring(0, id.lastIndexOf("."));
@@ -48,58 +48,61 @@ class Exporter {
 			}
 			return name;
 		}();
-		def created = new Date();
 		status = [
 			"identifier": identifier,
+			"paths": absPaths,
+			"noMetadata": noMetadata,
 			"filename": filename,
-			"status": "in-progress",
-			"eTag": "" + created.time,
-			"created": ISO8601.formatDate(created)
+			"eTag": "" + identifier,
+			"status": "prepared",
+			"statusText": "",
 		];
 		statusFile = new File(System.getProperty("java.io.tmpdir"), identifier + ".status");
 		statusFile.deleteOnExit();
 		statusFile.text = JSON.stringify(status);
 
-		def batchSession = context.repositorySession.newSession();
-		Thread.startDaemon(status.identifier, {
-			batchSession.withCloseable { repositorySession ->
-				new FileOutputStream(dataFile).withCloseable { out ->
-					new ZipArchiveOutputStream(out).withCloseable { zip ->
-						try {
-							zip.setCreateUnicodeExtraFields(ZipArchiveOutputStream.UnicodeExtraFieldPolicy.ALWAYS);
-							zip.setUseLanguageEncodingFlag(true);
-							zip.setFallbackToUTF8(true);
-							zip.setEncoding("UTF-8");
-							zip.setUseZip64(Zip64Mode.Always);
+		return this;
+	}
 
-							for (path in absPaths) {
-								if (!path.startsWith("/")) {
-									path = "/" + path;
-								}
-								def item = Item.create(context).with(repositorySession.resourceResolver.getResource(path));
-								_mkzip(item, zip, null, noMetadata);
-							}
+	def execute() {
+		status.status = "in-progress";
+		status.statusText = "";
 
-							zip.finish();
-						} catch (Throwable ex) {
-							status.status = "error";
-							status.statusText = ex.message;
-							statusFile.text = JSON.stringify(status);
+		def repositorySession = context.repositorySession;
+		new FileOutputStream(dataFile).withCloseable { out ->
+			new ZipArchiveOutputStream(out).withCloseable { zip ->
+				try {
+					zip.setCreateUnicodeExtraFields(ZipArchiveOutputStream.UnicodeExtraFieldPolicy.ALWAYS);
+					zip.setUseLanguageEncodingFlag(true);
+					zip.setFallbackToUTF8(true);
+					zip.setEncoding("UTF-8");
+					zip.setUseZip64(Zip64Mode.Always);
+
+					for (path in status.paths) {
+						if (!path.startsWith("/")) {
+							path = "/" + path;
 						}
+						def item = Item.create(context).with(repositorySession.resourceResolver.getResource(path));
+						_mkzip(item, zip, null);
 					}
+
+					zip.finish();
+
+					status.status = "done";
+					status.statusText = "";
+					_setStatus();
+				} catch (Throwable ex) {
+					status.status = "error";
+					status.statusText = ex.message;
+					_setStatus();
 				}
 			}
-
-			if (status.status == "in-progress") {
-				status.status = "completed";
-				statusFile.text = JSON.stringify(status);
-			}
-		});
+		}
 
 		return this;
 	}
 
-	def _mkzip(item, zip, rootPath, noMetadata) {
+	def _mkzip(item, zip, rootPath) {
 		if (!item.exists()) {
 			throw new java.lang.IllegalArgumentException("The item does not exist: " + item.path);
 		}
@@ -123,6 +126,10 @@ class Exporter {
 				path = "/" + path;
 			}
 
+			status.status = "in-progress";
+			status.statusText = 'Prepairing "' + path + '"';
+			_setStatus();
+
 			ZipArchiveEntry entry = new ZipArchiveEntry("/" + path);
 			entry.setTime(item.lastModified.time);
 
@@ -136,13 +143,13 @@ class Exporter {
 
 			if (item.isCollection()) {
 				for (child in item.list()) {
-					_mkzip(child, zip, rootPath, noMetadata);
+					_mkzip(child, zip, rootPath);
 				}
 			}
 		}();
 
 		// metadata
-		if (!noMetadata && !item.isCollection()) {
+		if (!status.noMetadata && !item.isCollection()) {
 			def path = item.parent.path + "/." + item.name + ".metadata.json";
 			path = path.substring(rootPath.length());
 			if (!path.startsWith("/")) {
@@ -156,6 +163,16 @@ class Exporter {
 			zip.write(item.toJson(true).getBytes("UTF-8"));
 			zip.closeArchiveEntry();
 		}
+	}
+
+	def _setStatus() {
+		if (statusMonitor == null) {
+			return;
+		}
+		statusMonitor.setStatus([
+			"status": status.status,
+			"statusText": status.statusText,
+		]);
 	}
 
 	def resolve(identifier) {
@@ -174,13 +191,6 @@ class Exporter {
 		return dataFile;
 	}
 
-	def newInputStream() {
-		if (!dataFile || !dataFile.exists()) {
-			throw new IOException("The data file cannot be found.");
-		}
-		return dataFile.newInputStream();
-	}
-
 	def getIdentifier() {
 		if (!status) {
 			return null;
@@ -189,7 +199,7 @@ class Exporter {
 	}
 
 	def exists() {
-		return (dataFile && dataFile.exists());
+		return (statusFile && statusFile.exists());
 	}
 
 	def remove() {
@@ -202,22 +212,15 @@ class Exporter {
 		return this;
 	}
 
+	def setStatusMonitor(statusMonitor) {
+		this.statusMonitor = statusMonitor;
+		return this;
+	}
+
 	def toObject() {
 		def o = [
 			"identifier": identifier
 		];
-		if (status) {
-			o.status = status.status;
-			if (status.statusText) {
-				o.statusText = status.statusText;
-			}
-		}
-		if (dataFile && dataFile.exists()) {
-			o.file = [
-				"lastModified": ISO8601.formatDate(new Date(dataFile.lastModified())),
-				"length": dataFile.length()
-			];
-		}
 		return o;
 	}
 

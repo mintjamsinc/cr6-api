@@ -13,20 +13,18 @@ class Importer {
 	def statusFile;
 	def status;
 	def preImportedEntries = [];
-	def log;
+	def statusMonitor;
 
 	Importer(context) {
 		this.context = context;
-		log = context.getAttribute("log");
 	}
 
 	static def create(ScriptingContext context) {
 		return new Importer(context);
 	}
 
-	def execute(String absPath, file) {
+	def prepare(String absPath, file) {
 		dataFile = file;
-		dataFile.deleteOnExit();
 		statusFile = File.createTempFile("import-", ".status");
 		statusFile.deleteOnExit();
 
@@ -34,49 +32,55 @@ class Importer {
 			def id = statusFile.name;
 			id = id.substring(0, id.lastIndexOf("."));
 		}();
-		def created = new Date();
+
 		status = [
 			"identifier": identifier,
+			"path": absPath,
 			"dataPath": dataFile.canonicalPath,
-			"status": "in-progress",
-			"created": ISO8601.formatDate(created)
+			"status": "prepared",
+			"statusText": "",
 		];
 		statusFile.text = JSON.stringify(status);
 
-		def batchSession = context.repositorySession.newSession();
-		Thread.startDaemon(status.identifier, {
-			batchSession.withCloseable { repositorySession ->
-				new ZipFile(dataFile).withCloseable { zip ->
-					try {
-						def item = Item.create(context).with(repositorySession.resourceResolver.getResource(absPath));
-						if (!item.exists()) {
-							throw new java.lang.IllegalArgumentException("The item does not exist: " + item.path);
-						}
-						if (!item.isCollection()) {
-							throw new java.lang.IllegalArgumentException("The item is not collection: " + item.path);
-						}
+		return this;
+	}
 
-						zip.entries.each { entry ->
-							_imp(item, zip, entry);
-						}
-					} catch (Throwable ex) {
-						log.error(ex.message, ex);
-						status.status = "error";
-						status.statusText = ex.message;
-						statusFile.text = JSON.stringify(status);
-					} finally {
-						try {
-							repositorySession.rollback();
-						} catch (Throwable ignore) {}
+	def execute() {
+		status.status = "in-progress";
+		status.statusText = "";
+
+		try {
+			def repositorySession = context.repositorySession;
+			new ZipFile(dataFile).withCloseable { zip ->
+				try {
+					def item = Item.create(context).with(repositorySession.resourceResolver.getResource(status.path));
+					if (!item.exists()) {
+						throw new java.lang.IllegalArgumentException("The item does not exist: " + item.path);
 					}
+					if (!item.isCollection()) {
+						throw new java.lang.IllegalArgumentException("The item is not collection: " + item.path);
+					}
+
+					zip.entries.each { entry ->
+						_imp(item, zip, entry);
+					}
+
+					status.status = "done";
+					status.statusText = "";
+					_setStatus();
+				} catch (Throwable ex) {
+					status.status = "error";
+					status.statusText = ex.message;
+					_setStatus();
+				} finally {
+					try {
+						repositorySession.rollback();
+					} catch (Throwable ignore) {}
 				}
 			}
-
-			if (status.status == "in-progress") {
-				status.status = "completed";
-				statusFile.text = JSON.stringify(status);
-			}
-		});
+		} finally {
+			remove();
+		}
 
 		return this;
 	}
@@ -90,11 +94,8 @@ class Importer {
 		try {
 			def impRelPath = {
 				def name = entry.name;
-				if (!name.startsWith("/")) {
-					name = "/" + name;
-				}
 				if (name.startsWith("//")) {
-					name = name.substring(1);
+					name = name.substring(2);
 				}
 				if (name.startsWith("/")) {
 					name = name.substring(1);
@@ -114,6 +115,10 @@ class Importer {
 				item.mkdirs();
 				return;
 			}
+
+			status.status = "in-progress";
+			status.statusText = 'Importing "' + impRelPath + '"';
+			_setStatus();
 
 			if (item.exists()) {
 				if (item.isVersionControlled()) {
@@ -199,6 +204,16 @@ class Importer {
 		}
 	}
 
+	def _setStatus() {
+		if (statusMonitor == null) {
+			return;
+		}
+		statusMonitor.setStatus([
+			"status": status.status,
+			"statusText": status.statusText,
+		]);
+	}
+
 	def resolve(identifier) {
 		statusFile = new File(System.getProperty("java.io.tmpdir"), identifier + ".status");
 		if (statusFile.exists()) {
@@ -216,7 +231,7 @@ class Importer {
 	}
 
 	def exists() {
-		return (dataFile && dataFile.exists());
+		return (statusFile && statusFile.exists());
 	}
 
 	def remove() {
@@ -229,22 +244,15 @@ class Importer {
 		return this;
 	}
 
+	def setStatusMonitor(statusMonitor) {
+		this.statusMonitor = statusMonitor;
+		return this;
+	}
+
 	def toObject() {
 		def o = [
-			"identifier": identifier
+			"identifier": status.identifier,
 		];
-		if (status) {
-			o.status = status.status;
-			if (status.statusText) {
-				o.statusText = status.statusText;
-			}
-		}
-		if (dataFile && dataFile.exists()) {
-			o.file = [
-				"lastModified": ISO8601.formatDate(new Date(dataFile.lastModified())),
-				"length": dataFile.length()
-			];
-		}
 		return o;
 	}
 
