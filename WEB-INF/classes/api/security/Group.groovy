@@ -13,66 +13,8 @@ class Group extends Authorizable {
 		return new Group(context);
 	}
 
-	def with(jp.co.mintjams.osgi.service.jcr.security.UserManager.Authorizable authorizable) {
-		if (!authorizable) {
-			return this;
-		}
-		if (!authorizable.isGroup()) {
-			throw new IllegalArgumentException("authorizable is user.");
-		}
+	def with(org.mintjams.jcr.security.GroupPrincipal authorizable) {
 		super.with(authorizable);
 		return this;
-	}
-
-	def canEdit() {
-		return authorizable.canEdit();
-	}
-
-	def getDeclaredMembers() {
-		return authorizable.getDeclaredMembers().collect {
-			def a;
-			if (it.isGroup()) {
-				a = Group.create(context);
-			} else {
-				a = User.create(context);
-			}
-			a.with(it);
-		};
-	}
-
-	def getMembers() {
-		return authorizable.getMembers().collect {
-			def a;
-			if (it.isGroup()) {
-				a = Group.create(context);
-			} else {
-				a = User.create(context);
-			}
-			a.with(it);
-		};
-	}
-
-	def addMember(another) {
-		return authorizable.addMember(another);
-	}
-
-	def addMembers(String... names) {
-		return authorizable.addMembers(names);
-	}
-
-	def removeMember(another) {
-		return authorizable.removeMember(another);
-	}
-
-	def removeMembers(String... names) {
-		return authorizable.removeMembers(names);
-	}
-
-	def isDeclaredMember(another) {
-		return authorizable.isDeclaredMember(another);
-	}
-
-	def isMember(another) {
-		return authorizable.isMember(another);
 	}
 }
