@@ -35,7 +35,7 @@ class JSON {
 			}
 		}
 
-		if (value instanceof jp.co.mintjams.osgi.service.jcr.Resource) {
+		if (value instanceof org.mintjams.script.resource.Resource) {
 			return value.getContentAsReader().withCloseable { reader ->
 				return parse(reader.text);
 			}

@@ -4,7 +4,7 @@ package api.security.otp;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.mintjams.script.ScriptingContext;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.lang3.StringUtils;
 

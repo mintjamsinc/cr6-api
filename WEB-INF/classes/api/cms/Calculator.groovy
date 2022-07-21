@@ -4,7 +4,7 @@ package api.cms;
 
 import api.util.JSON;
 import api.util.ResourceLoader;
-import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.mintjams.script.ScriptingContext;
 
 class Calculator {
 	def context;

@@ -2,7 +2,7 @@
 
 package api.security;
 
-import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.mintjams.script.ScriptingContext;
 
 class Group extends Authorizable {
 	Group(context) {

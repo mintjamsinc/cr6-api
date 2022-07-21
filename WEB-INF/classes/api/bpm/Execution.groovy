@@ -3,7 +3,7 @@
 package api.bpm;
 
 import api.util.JSON;
-import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.mintjams.script.ScriptingContext;
 
 class Execution {
 	def context;

@@ -3,7 +3,7 @@
 package api.security;
 
 import api.util.JSON;
-import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.mintjams.script.ScriptingContext;
 
 class Privilege {
 	def context;
@@ -17,7 +17,7 @@ class Privilege {
 		return new Privilege(context);
 	}
 
-	def with(jp.co.mintjams.osgi.service.jcr.security.AccessControlManager.Privilege privilege) {
+	def with(org.mintjams.jcr.security.Privilege privilege) {
 		this.privilege = privilege;
 		return this;
 	}

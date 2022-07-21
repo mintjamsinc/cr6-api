@@ -2,9 +2,9 @@
 
 package api.util;
 
-import jp.co.mintjams.osgi.service.jcr.Resource;
-import jp.co.mintjams.osgi.service.jcr.ResourceResolver;
-import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.mintjams.script.resource.Resource;
+import org.mintjams.script.resource.ResourceResolver;
+import org.mintjams.script.ScriptingContext;
 
 class ResourceLoader {
 	ResourceResolver resolver;

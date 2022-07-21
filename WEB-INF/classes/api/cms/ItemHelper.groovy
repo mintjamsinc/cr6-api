@@ -4,7 +4,7 @@ package api.cms;
 
 import api.util.ISO8601;
 import api.util.JSON;
-import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.mintjams.script.ScriptingContext;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.jpeg.JpegDirectory;

@@ -4,7 +4,7 @@ package api.security;
 
 import api.util.ISO8601;
 import api.util.JSON;
-import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.mintjams.script.ScriptingContext;
 
 class Authorizable {
 	def context;

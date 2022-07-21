@@ -4,7 +4,7 @@ package api.cms;
 
 import api.util.ISO8601;
 import api.util.JSON;
-import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.mintjams.script.ScriptingContext;
 import org.apache.commons.compress.archivers.zip.UnicodePathExtraField;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;

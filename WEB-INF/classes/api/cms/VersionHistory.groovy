@@ -4,7 +4,7 @@ package api.cms;
 
 //import api.util.ISO8601;
 import api.util.JSON;
-import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.mintjams.script.ScriptingContext;
 
 class VersionHistory {
 	def context;
@@ -18,7 +18,7 @@ class VersionHistory {
 		return new VersionHistory(context);
 	}
 
-	def with(jp.co.mintjams.osgi.service.jcr.VersionHistory versionHistory) {
+	def with(org.mintjams.script.resource.version.VersionHistory versionHistory) {
 		this.versionHistory = versionHistory;
 		return this;
 	}

@@ -5,18 +5,19 @@ package api.util;
 import java.text.MessageFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.mintjams.rt.cms.internal.web.Webs;
 
 class Text {
 	static String encodeURIComponent(String value) {
-		return org.apache.jackrabbit.util.Text.escape(value);
+		return Webs.encode(value);
 	}
 
 	static String encodeURI(String value) {
-		return org.apache.jackrabbit.util.Text.escapePath(value);
+		return Webs.encodePath(value);
 	}
 
 	static String decodeURIComponent(String value) {
-		return org.apache.jackrabbit.util.Text.unescape(value);
+		return Webs.decode(value);
 	}
 
 	static def escapeHtml(text) {

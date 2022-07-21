@@ -2,7 +2,10 @@
 
 package api.util;
 
-import org.yaml.snakeyaml.Yaml;
+import org.snakeyaml.engine.v2.api.Dump;
+import org.snakeyaml.engine.v2.api.DumpSettings;
+import org.snakeyaml.engine.v2.api.Load;
+import org.snakeyaml.engine.v2.api.LoadSettings;
 
 class YAML {
 	static Object parse(Object value) {
@@ -11,7 +14,7 @@ class YAML {
 		}
 
 		if (value instanceof String) {
-			return new Yaml().load(value);
+			return new Load(LoadSettings.builder().build()).loadFromString(value);
 		}
 
 		if (value instanceof java.io.InputStream) {
@@ -26,7 +29,7 @@ class YAML {
 			}
 		}
 
-		if (value instanceof jp.co.mintjams.osgi.service.jcr.Resource) {
+		if (value instanceof org.mintjams.script.resource.Resource) {
 			return value.getContentAsReader().withCloseable { reader ->
 				return parse(reader.text);
 			}
@@ -40,6 +43,6 @@ class YAML {
 	}
 
 	static String stringify(Object value) {
-		return new Yaml().dump(value);
+		return new Dump(DumpSettings.builder().build()).dumpToString(value);
 	}
 }

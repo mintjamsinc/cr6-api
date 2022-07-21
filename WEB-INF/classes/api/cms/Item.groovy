@@ -8,7 +8,7 @@ import api.util.JSON;
 import java.io.ByteArrayInputStream; 
 import java.io.IOException;
 import java.util.Locale;
-import jp.co.mintjams.osgi.service.jcr.script.ScriptingContext;
+import org.mintjams.script.ScriptingContext;
 
 class Item {
 	def context;
@@ -25,7 +25,7 @@ class Item {
 		return new Item(context);
 	}
 
-	def with(jp.co.mintjams.osgi.service.jcr.Resource resource) {
+	def with(org.mintjams.script.resource.Resource resource) {
 		this.resource = resource;
 		currentItem = null;
 		facet = null;
@@ -216,7 +216,7 @@ class Item {
 		if (resource.isCollection()) {
 			return this;
 		}
-		if (resource instanceof jp.co.mintjams.osgi.service.jcr.FrozenResource) {
+		if (resource instanceof org.mintjams.script.resource.version.FrozenResource) {
 			return this;
 		}
 		if (currentItem) {
@@ -595,7 +595,7 @@ class Item {
 				o["isCheckedOut"] = isCheckedOut();
 				o["version"] = baseVersion.getName();
 			}
-			if (resource instanceof jp.co.mintjams.osgi.service.jcr.FrozenResource) {
+			if (resource instanceof org.mintjams.script.resource.version.FrozenResource) {
 				o["isFrozen"] = true;
 				o["frozenPath"] = resource.frozenPath;
 				o["version"] = resource.getVersion().getName();
