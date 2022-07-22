@@ -22,7 +22,7 @@ class ResourceLoader {
 	}
 
 	static ResourceLoader create(ScriptingContext value) {
-		return new ResourceLoader(value.repositorySession.resourceResolver);
+		return new ResourceLoader(value.resourceResolver);
 	}
 
 	Object loadAsYaml(String path) {

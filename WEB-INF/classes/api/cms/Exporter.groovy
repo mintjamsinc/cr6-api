@@ -82,7 +82,7 @@ class Exporter {
 						if (!path.startsWith("/")) {
 							path = "/" + path;
 						}
-						def item = Item.create(context).with(repositorySession.resourceResolver.getResource(path));
+						def item = Item.create(context).with(resourceResolver.getResource(path));
 						_mkzip(item, zip, null);
 					}
 

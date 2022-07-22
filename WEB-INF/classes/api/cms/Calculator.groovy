@@ -34,7 +34,7 @@ class Calculator {
 		];
 
 		def ScriptAPI = context.getAttribute("ScriptAPI");
-		def resourceResolver = context.repositorySession.resourceResolver;
+		def resourceResolver = context.resourceResolver;
 		def scriptExtension;
 		if (context.scriptEngineManager.getEngineByExtension("njs")) {
 			scriptExtension = "njs";
@@ -55,7 +55,7 @@ class Calculator {
 	}
 
 	def getFacetDefinitions() {
-		def resourceResolver = context.repositorySession.resourceResolver;
+		def resourceResolver = context.resourceResolver;
 		def facetDefinitions = [:];
 		for (p in item.resource.properties) {
 			def facetPath = "/WEB-INF/facets/" + p.name + ".yml";

@@ -46,7 +46,7 @@ class Item {
 	}
 
 	def findByPath(path) {
-		return with(context.repositorySession.resourceResolver.getResource(path));
+		return with(context.resourceResolver.getResource(path));
 	}
 
 	def getIdentifier() {
@@ -562,15 +562,15 @@ class Item {
 		}
 
 		def o = [
-			"id": identifier,
-			"name": name,
-			"path": path,
+			"id": getIdentifier(),
+			"name": getName(),
+			"path": getPath(),
 			"exists": true,
 			"isCollection": isCollection(),
-			"creationTime": ISO8601.formatDate(created),
-			"lastModificationTime": ISO8601.formatDate(lastModified),
-			"createdBy": createdBy,
-			"lastModifiedBy": lastModifiedBy,
+			"creationTime": ISO8601.formatDate(getCreated()),
+			"lastModificationTime": ISO8601.formatDate(getLastModified()),
+			"createdBy": getCreatedBy(),
+			"lastModifiedBy": getLastModifiedBy(),
 			"isLocked": isLocked(),
 			"holdsLock": holdsLock(),
 			"isReferenceable": isReferenceable(),
@@ -581,14 +581,14 @@ class Item {
 			"isFrozen": false
 		];
 		if (isLocked()) {
-			o.lockedBy = lockedBy;
+			o.lockedBy = getLockedBy();
 		}
 		if (!isCollection()) {
 			o["uuid"] = resource.getProperty("jcr:uuid").getString();
-			o["contentLength"] = contentLength;
-			o["mimeType"] = contentType;
-			if (contentEncoding) {
-				o["encoding"] = contentEncoding;
+			o["contentLength"] = getContentLength();
+			o["mimeType"] = getContentType();
+			if (getContentEncoding()) {
+				o["encoding"] = getContentEncoding();
 			}
 			o["isVersionControlled"] = isVersionControlled();
 			if (isVersionControlled()) {
@@ -598,7 +598,7 @@ class Item {
 			if (resource instanceof org.mintjams.script.resource.version.FrozenResource) {
 				o["isFrozen"] = true;
 				o["frozenPath"] = resource.frozenPath;
-				o["version"] = resource.getVersion().getName();
+				o["version"] = resource.version.name;
 			}
 
 			def r = current.resource;
