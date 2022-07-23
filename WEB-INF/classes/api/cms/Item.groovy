@@ -584,7 +584,9 @@ class Item {
 			o.lockedBy = getLockedBy();
 		}
 		if (!isCollection()) {
-			o["uuid"] = resource.getProperty("jcr:uuid").getString();
+			if (resource.hasProperty("jcr:uuid")) {
+				o["uuid"] = resource.getProperty("jcr:uuid").getString();
+			}
 			o["contentLength"] = getContentLength();
 			o["mimeType"] = getContentType();
 			if (getContentEncoding()) {

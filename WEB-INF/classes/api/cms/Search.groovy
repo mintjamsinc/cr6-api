@@ -17,16 +17,7 @@ class Search {
 	}
 
 	def execute(params) {
-		def api;
-		if (params.language.toLowerCase() == "xpath") {
-			api = context.getAttribute("XPath");
-		} else if (params.language.toLowerCase() == "jcr-sql2") {
-			api = context.getAttribute("JCRSQL2");
-		} else {
-			throw new IllegalArgumentException("Invalid language: " + params.language);
-		}
-
-		def result = api.createQuery(params.statement)
+		def result = context.resourceResolver.session.workspace.queryManager.createQuery(params.statement, params.language)
 			.offset(params.offset ?: 0)
 			.limit(params.limit ?: 100)
 			.execute();
@@ -60,7 +51,7 @@ class Search {
 		def toObject() {
 			def o = [
 				"hasMore": result.hasMore(),
-				"total": result.total,
+				"total": result.getTotal(),
 				"items": []
 			];
 			for (r in result.resources) {
