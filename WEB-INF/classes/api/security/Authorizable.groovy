@@ -2,13 +2,14 @@
 
 package api.security;
 
+import api.cms.Item;
 import api.util.JSON;
+import api.util.Text;
 import org.mintjams.script.ScriptingContext;
 
 class Authorizable {
 	def context;
-	def identifier;
-	def authorizable;
+	def _identifier;
 
 	Authorizable(context) {
 		this.context = context;
@@ -18,30 +19,36 @@ class Authorizable {
 		return new Authorizable(context);
 	}
 
-	def with(java.security.Principal authorizable) {
-		this.authorizable = authorizable;
-		if (authorizable) {
-			this.identifier = authorizable.name;
-		}
+	def with(String identifier) {
+		_identifier = identifier;
 		return this;
 	}
 
-	def getName() {
-		if (!authorizable) {
-			return null;
-		}
-		return authorizable.name;
+	def getIdentifier() {
+		return _identifier;
+	}
+
+	def getHomeFolder() {
+		return Item.create(context).with(context.resourceResolver.session.userManager.getHomeFolder(getIdentifier()));
+	}
+
+	def exists() {
+		return getHomeFolder().exists();
 	}
 
 	def isGroup() {
-		return (authorizable instanceof org.mintjams.jcr.security.GroupPrincipal);
+		if (exists()) {
+			return getHomeFolder().getBoolean("isGroup");
+		}
+		return (this instanceof Group);
 	}
 
 	Object toObject() {
 		def o = [
-			"id" : getName(),
+			"id" : getIdentifier(),
 			"isGroup" : isGroup()
 		];
+
 		return o;
 	}
 

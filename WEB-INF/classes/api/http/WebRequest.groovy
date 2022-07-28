@@ -6,16 +6,23 @@ import api.util.JSON;
 import api.util.YAML;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import org.mintjams.script.ScriptingContext;
 
 class WebRequest {
+	def context;
 	HttpServletRequest request;
 
-	WebRequest(HttpServletRequest request) {
-		this.request = request;
+	WebRequest(context) {
+		this.context = context;
 	}
 
-	static WebRequest create(HttpServletRequest request) {
-		return new WebRequest(request);
+	static def create(ScriptingContext context) {
+		return new WebRequest(context);
+	}
+
+	def with(HttpServletRequest request) {
+		this.request = request;
+		return this;
 	}
 
 	Object parseRequest() {

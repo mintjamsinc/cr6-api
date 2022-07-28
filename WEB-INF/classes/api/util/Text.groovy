@@ -2,6 +2,8 @@
 
 package api.util;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.text.MessageFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -20,16 +22,16 @@ class Text {
 		return Webs.decode(value);
 	}
 
-	static def escapeHtml(text) {
-		return StringEscapeUtils.escapeHtml4(text);
+	static def escapeHtml(String value) {
+		return StringEscapeUtils.escapeHtml4(value);
 	}
 
-	static def escapeEcmaScript(text) {
-		return StringEscapeUtils.escapeEcmaScript(text);
+	static def escapeEcmaScript(String value) {
+		return StringEscapeUtils.escapeEcmaScript(value);
 	}
 
-	static def escapeJson(text) {
-		return StringEscapeUtils.escapeJson(text);
+	static def escapeJson(String value) {
+		return StringEscapeUtils.escapeJson(value);
 	}
 
 	static def format(pattern, ... args) {
@@ -42,5 +44,9 @@ class Text {
 
 	static def replace(value, searchString, replacement) {
 		return StringUtils.replace(value, searchString, replacement);
+	}
+
+	static def digestAsHex(String value, String algorithm) {
+		return MessageDigest.getInstance(algorithm).digest(value.getBytes(StandardCharsets.UTF_8)).encodeHex().toString();
 	}
 }

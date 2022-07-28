@@ -13,16 +13,16 @@ class User extends Authorizable {
 		return new User(context);
 	}
 
-	def with(org.mintjams.jcr.security.UserPrincipal authorizable) {
-		super.with(authorizable);
+	def with(org.mintjams.jcr.security.UserPrincipal principal) {
+		super.with(principal.name);
 		return this;
 	}
 
 	def isAdmin() {
-		return (authorizable instanceof org.mintjams.jcr.security.AdminPrincipal);
+		return (principal instanceof org.mintjams.jcr.security.AdminPrincipal);
 	}
 
 	def isAnonymous() {
-		return (authorizable instanceof org.mintjams.jcr.security.GuestPrincipal);
+		return (principal instanceof org.mintjams.jcr.security.GuestPrincipal);
 	}
 }

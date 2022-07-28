@@ -13,8 +13,8 @@ class Group extends Authorizable {
 		return new Group(context);
 	}
 
-	def with(org.mintjams.jcr.security.GroupPrincipal authorizable) {
-		super.with(authorizable);
+	def with(org.mintjams.jcr.security.GroupPrincipal principal) {
+		super.with(principal.name);
 		return this;
 	}
 }

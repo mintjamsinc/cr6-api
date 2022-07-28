@@ -117,11 +117,7 @@ class Item {
 	}
 
 	def list() {
-		def l = [];
-		for (r in resource.list()) {
-			l.add(Item.create(context).with(r));
-		}
-		return l;
+		return ItemIterator.create(context).with(resource.list());
 	}
 
 	def isCollection() {

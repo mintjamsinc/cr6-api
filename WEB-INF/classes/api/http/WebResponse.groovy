@@ -8,18 +8,25 @@ import api.util.YAML;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
+import org.mintjams.script.ScriptingContext;
 
 class WebResponse {
+	def context;
 	HttpServletResponse response;
 	long contentLength = -1;
 	String eTag;
 
-	WebResponse(HttpServletResponse response) {
-		this.response = response;
+	WebResponse(context) {
+		this.context = context;
 	}
 
-	static WebResponse create(HttpServletResponse response) {
-		return new WebResponse(response);
+	static def create(ScriptingContext context) {
+		return new WebResponse(context);
+	}
+
+	def with(HttpServletResponse response) {
+		this.response = response;
+		return this;
 	}
 
 	WebResponse setStatus(int status) {
@@ -292,6 +299,5 @@ class WebResponse {
 
 		response.setStatus(resp.status);
 		response.setContentType("application/json");
-		response.getWriter().print(JSON.stringify(resp));
 	}
 }
