@@ -41,7 +41,7 @@ class Calculator {
 		} else {
 			scriptExtension = "es";
 		}
-		def scriptResource = context.resourceResolver.getResource("/WEB-INF/classes/api/cms/Calculator_calculate." + scriptExtension);
+		def scriptResource = context.resourceResolver.getResource("/content/WEB-INF/classes/api/cms/Calculator_calculate." + scriptExtension);
 		def resultJson = ScriptAPI.createScript(scriptResource)
 			.setAsync(false)
 			.setAttribute("parametersJson", JSON.stringify(arguments))
@@ -58,7 +58,7 @@ class Calculator {
 		def resourceResolver = context.resourceResolver;
 		def facetDefinitions = [:];
 		for (p in item.resource.properties) {
-			def facetPath = "/WEB-INF/facets/" + p.name + ".yml";
+			def facetPath = "/content/WEB-INF/facets/" + p.name + ".yml";
 			def facetResource = resourceResolver.getResource(facetPath);
 			if (!facetResource.exists()) {
 				continue;
