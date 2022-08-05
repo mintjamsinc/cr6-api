@@ -24,6 +24,13 @@ class Authorizable {
 		return this;
 	}
 
+	def with(java.security.Principal principal) {
+		if (principal instanceof org.mintjams.jcr.security.GroupPrincipal) {
+			return Group.create(context).with(principal);
+		}
+		return User.create(context).with(principal);
+	}
+
 	def getIdentifier() {
 		return _identifier;
 	}

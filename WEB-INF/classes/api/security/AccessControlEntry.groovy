@@ -38,8 +38,8 @@ class AccessControlEntry {
 
 	def toObject() {
 		def o = [
-			"id": grantee.name,
-			"grantee": grantee.name,
+			"id": getGrantee().getIdentifier(),
+			"grantee": getGrantee().getIdentifier(),
 			"isAllow": isAllow(),
 			"privileges": privileges.collect {
 				it.name;
