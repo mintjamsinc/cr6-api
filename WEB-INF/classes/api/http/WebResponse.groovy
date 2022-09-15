@@ -278,6 +278,9 @@ class WebResponse {
 		} else if (name == "AlreadyExistsException") {
 			resp.status = 409;
 			resp.statusText = "Already exists: " + resp.statusText;
+		} else if (name == "ResourceAlreadyExistsException") {
+			resp.status = 409;
+			resp.statusText = "Already exists: " + resp.statusText;
 		} else if (name == "LockException") {
 			resp.status = 423;
 			resp.statusText = "Locked: " + resp.statusText;
