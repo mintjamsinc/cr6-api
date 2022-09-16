@@ -53,7 +53,7 @@ class Importer {
 			def repositorySession = context.repositorySession;
 			new ZipFile(dataFile).withCloseable { zip ->
 				try {
-					def item = Item.create(context).with(resourceResolver.getResource(status.path));
+					def item = Item.create(context).with(context.resourceResolver.getResource(status.path));
 					if (!item.exists()) {
 						throw new java.lang.IllegalArgumentException("The item does not exist: " + item.path);
 					}
