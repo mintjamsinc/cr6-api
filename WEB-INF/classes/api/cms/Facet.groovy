@@ -28,7 +28,7 @@ class Facet {
 		}
 
 		if (!facetDefinitions.containsKey(key)) {
-			def facetPath = "/WEB-INF/facets/" + key + ".yml";
+			def facetPath = "/content/WEB-INF/facets/" + key + ".yml";
 			def facetResource = item.resource.resourceResolver.getResource(facetPath);
 			if (facetResource.exists()) {
 				def d = ResourceLoader.create(item.resource).loadAsYaml(facetPath);
@@ -57,7 +57,7 @@ class Facet {
 		} else {
 			scriptExtension = "es";
 		}
-		def scriptResource = item.context.resourceResolver.getResource("/WEB-INF/classes/api/cms/Facet_getDisplayText." + scriptExtension);
+		def scriptResource = item.context.resourceResolver.getResource("/content/WEB-INF/classes/api/cms/Facet_getDisplayText." + scriptExtension);
 		def resultJson = ScriptAPI.createScript(scriptResource)
 			.setAsync(false)
 			.setAttribute("parametersJson", JSON.stringify(arguments))

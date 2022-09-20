@@ -52,8 +52,9 @@ class Importer {
 		try {
 			def repositorySession = context.repositorySession;
 			new ZipFile(dataFile).withCloseable { zip ->
+				def item;
 				try {
-					def item = Item.create(context).with(context.resourceResolver.getResource(status.path));
+					item = Item.create(context).with(context.resourceResolver.getResource(status.path));
 					if (!item.exists()) {
 						throw new java.lang.IllegalArgumentException("The item does not exist: " + item.path);
 					}
@@ -69,8 +70,9 @@ class Importer {
 					status.statusText = "";
 					_setStatus();
 				} catch (Throwable ex) {
+					ex.printStackTrace();
 					status.status = "error";
-					status.statusText = ex.message;
+					status.statusText = ex.message ? ex.message : "An error occurred while importing the content: " + item.path;
 					_setStatus();
 				} finally {
 					try {
