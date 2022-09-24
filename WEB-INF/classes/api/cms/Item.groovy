@@ -641,7 +641,7 @@ class Item {
 					}
 				} else if (p.typeName == "Reference" || p.typeName == "WeakReference" || p.typeName == "Path") {
 					try {
-						prop.value = Item.create(context).with(p.resource).toObject();
+						prop.value = Item.create(context).with(p.resource).toObject(exportsBinary);
 					} catch (Throwable ex) {
 						context.getAttribute("log").warn("Could not obtain a node which this property refers: Path: " + resource.path + "@" + p.name + ", Exception: " + ex.message);
 					}
