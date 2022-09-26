@@ -538,7 +538,7 @@ class Item {
 		return this;
 	}
 
-	def toObject(exportsBinary = false) {
+	def toObject(boolean exportsBinary = false) {
 		if (!exists()) {
 			return [
 				"name": resource.name,
@@ -613,18 +613,6 @@ class Item {
 					"isMultiple": p.isMultiple()
 				];
 
-				if (!p.isMultiple()) {
-					if (p.value == null) {
-						o.properties[p.name] = prop;
-						continue;
-					}
-				} else {
-					if (p.values == null) {
-						o.properties[p.name] = prop;
-						continue;
-					}
-				}
-
 				if (p.typeName == "Binary") {
 					if (exportsBinary) {
 						prop.value = p.getByteArray().encodeBase64().toString();
@@ -672,7 +660,7 @@ class Item {
 		return o;
 	}
 
-	def toJson(exportsBinary = false) {
+	def toJson(boolean exportsBinary = false) {
 		return JSON.stringify(toObject(exportsBinary));
 	}
 }
