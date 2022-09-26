@@ -459,16 +459,6 @@ class Item {
 
 		resource.setProperty(key, value, mask);
 		return this;
- 	}
-
-	def setAttribute(String key, byte[] value, String mimeType = "application/octet-stream") {
-		if (value == null) {
-			removeAttribute(key);
-			return this;
-		}
-
-		resource.setProperty(key, "{binary:" + mimeType + ":" + value.length + "}" + value.encodeBase64().toString());
-		return this;
 	}
 
  	def removeAttribute(key) {
