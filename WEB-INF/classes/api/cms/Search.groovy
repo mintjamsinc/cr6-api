@@ -17,7 +17,7 @@ class Search {
 	}
 
 	def execute(params) {
-		def result = context.resourceResolver.session.workspace.queryManager.createQuery(params.statement, params.language)
+		def result = context.session.workspace.queryManager.createQuery(params.statement, params.language)
 			.offset(params.offset ?: 0)
 			.limit(params.limit ?: 100)
 			.execute();

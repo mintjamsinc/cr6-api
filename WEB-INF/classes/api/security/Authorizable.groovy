@@ -19,11 +19,6 @@ class Authorizable {
 		return new Authorizable(context);
 	}
 
-	def with(String identifier) {
-		_identifier = identifier;
-		return this;
-	}
-
 	def with(java.security.Principal principal) {
 		if (principal instanceof org.mintjams.jcr.security.GroupPrincipal) {
 			return Group.create(context).with(principal);
@@ -36,7 +31,15 @@ class Authorizable {
 	}
 
 	def getHomeFolder() {
-		return Item.create(context).with(context.resourceResolver.session.userManager.getHomeFolder(getIdentifier()));
+		return Item.create(context).with(context.session.userManager.getHomeFolder(getIdentifier()));
+	}
+
+	def getAttributes() {
+		def item = getHomeFolder().getItem("attributes");
+		if (!item.exists()) {
+			item.createNewFile();
+		}
+		return item;
 	}
 
 	def exists() {
