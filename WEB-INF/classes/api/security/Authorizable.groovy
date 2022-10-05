@@ -9,7 +9,7 @@ import org.mintjams.script.ScriptingContext;
 
 class Authorizable {
 	def context;
-	def _identifier;
+	def principal;
 
 	Authorizable(context) {
 		this.context = context;
@@ -27,11 +27,11 @@ class Authorizable {
 	}
 
 	def getIdentifier() {
-		return _identifier;
+		return principal.name;
 	}
 
 	def getHomeFolder() {
-		return Item.create(context).with(context.session.userManager.getHomeFolder(getIdentifier()));
+		return Item.create(context).with(context.session.userManager.getHomeFolder(principal));
 	}
 
 	def getAttributes() {

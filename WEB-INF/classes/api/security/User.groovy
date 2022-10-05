@@ -14,7 +14,7 @@ class User extends Authorizable {
 	}
 
 	def with(org.mintjams.jcr.security.UserPrincipal principal) {
-		super.with(principal);
+		this.principal = principal;
 		return this;
 	}
 

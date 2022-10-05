@@ -14,7 +14,7 @@ class Group extends Authorizable {
 	}
 
 	def with(org.mintjams.jcr.security.GroupPrincipal principal) {
-		super.with(principal);
+		this.principal = principal;
 		return this;
 	}
 }
