@@ -48,7 +48,7 @@ class Authorizable {
 
 	def isGroup() {
 		if (exists()) {
-			return getHomeFolder().getBoolean("isGroup");
+			return getAttributes().getBoolean("isGroup");
 		}
 		return (this instanceof Group);
 	}
@@ -58,6 +58,13 @@ class Authorizable {
 			"id" : getIdentifier(),
 			"isGroup" : isGroup()
 		];
+
+		def attr = getAttributes().toObject();
+		o.properties = attr.properties;
+		o.creationTime = attr.creationTime;
+		o.lastModificationTime = attr.lastModificationTime;
+		o.createdBy = attr.createdBy;
+		o.lastModifiedBy = attr.lastModifiedBy;
 
 		return o;
 	}

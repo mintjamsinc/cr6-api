@@ -106,9 +106,6 @@ class Exporter {
 		if (!item.exists()) {
 			throw new java.lang.IllegalArgumentException("The item does not exist: " + item.path);
 		}
-		if (item.name.startsWith("rep:")) {
-			return;
-		}
 
 		if (!rootPath) {
 			rootPath = item.parent.path;

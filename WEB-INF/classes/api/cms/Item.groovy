@@ -286,9 +286,9 @@ class Item {
 		return this;
 	}
 
- 	def contains(key) {
+	def contains(key) {
 		return current.resource.hasProperty(key);
- 	}
+	}
 
 	def getBoolean(key, defaultValue = false) {
 		if (!contains(key)) {
@@ -297,110 +297,117 @@ class Item {
 		return current.resource.getProperty(key).boolean;
 	}
 
- 	def getBooleanArray(key, defaultValue = new boolean[0]) {
+	def getBooleanArray(key, defaultValue = new boolean[0]) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).booleanArray;
- 	}
+	}
 
- 	def getDate(key, defaultValue = new Date()) {
+	def getDate(key, defaultValue = new Date()) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).date.time;
- 	}
+	}
 
- 	def getDateArray(key, defaultValue = new Date[0]) {
+	def getDateArray(key, defaultValue = new Date[0]) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).dateArray;
- 	}
+	}
 
- 	def getDecimal(key, defaultValue = BigDecimal.ZERO) {
+	def getDecimal(key, defaultValue = BigDecimal.ZERO) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).decimal;
- 	}
+	}
 
- 	def getDecimalArray(key, defaultValue = new BigDecimal[0]) {
+	def getDecimalArray(key, defaultValue = new BigDecimal[0]) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).decimalArray;
- 	}
+	}
 
- 	def getDouble(key, defaultValue = 0) {
+	def getDouble(key, defaultValue = 0) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).double;
- 	}
+	}
 
- 	def getDoubleArray(key, defaultValue = new double[0]) {
+	def getDoubleArray(key, defaultValue = new double[0]) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).doubleArray;
- 	}
+	}
 
- 	def getLong(key, defaultValue = 0) {
+	def getLong(key, defaultValue = 0) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).long;
- 	}
+	}
 
- 	def getLongArray(key, defaultValue = new long[0]) {
+	def getLongArray(key, defaultValue = new long[0]) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).longArray;
- 	}
+	}
 
- 	def getInt(key, defaultValue = 0) {
+	def getInt(key, defaultValue = 0) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).int;
- 	}
+	}
 
- 	def getIntArray(key, defaultValue = new int[0]) {
+	def getIntArray(key, defaultValue = new int[0]) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).intArray;
- 	}
+	}
 
- 	def getString(key, defaultValue = "") {
+	def getString(key, defaultValue = "") {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).string;
- 	}
+	}
 
- 	def getStringArray(key, defaultValue = new String[0]) {
+	def getStringArray(key, defaultValue = new String[0]) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).stringArray;
- 	}
+	}
 
- 	def getByteArray(key, defaultValue = new byte[0]) {
+	def getByteArray(key, defaultValue = new byte[0]) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).byteArray;
- 	}
+	}
 
- 	def getStream(key, defaultValue = new ByteArrayInputStream(new byte[0])) {
+	def getStream(key, defaultValue = new ByteArrayInputStream(new byte[0])) {
 		if (!contains(key)) {
 			return defaultValue;
 		}
 		return current.resource.getProperty(key).stream;
- 	}
+	}
+
+	def getDataLength(key) {
+		if (!contains(key)) {
+			return defaultValue;
+		}
+		return current.resource.getProperty(key).length;
+	 }
 
 	def getReferencedItem(key, defaultValue = null) {
 		if (!contains(key)) {
@@ -431,7 +438,7 @@ class Item {
 		];
 	}
 
- 	def setAttribute(key, value) {
+	def setAttribute(key, value) {
 		if (value == null) {
 			removeAttribute(key);
 			return this;
@@ -439,19 +446,9 @@ class Item {
 
 		resource.setProperty(key, value);
 		return this;
- 	}
+	}
 
- 	def setAttribute(String key, String value, boolean mask) {
-		if (value == null) {
-			removeAttribute(key);
-			return this;
-		}
-
-		resource.setProperty(key, value, mask);
-		return this;
- 	}
-
- 	def setAttribute(String key, String[] value, boolean mask) {
+	def setAttribute(String key, String value, boolean mask) {
 		if (value == null) {
 			removeAttribute(key);
 			return this;
@@ -461,13 +458,23 @@ class Item {
 		return this;
 	}
 
- 	def removeAttribute(key) {
+	def setAttribute(String key, String[] value, boolean mask) {
+		if (value == null) {
+			removeAttribute(key);
+			return this;
+		}
+
+		resource.setProperty(key, value, mask);
+		return this;
+	}
+
+	def removeAttribute(key) {
 		if (!contains(key)) {
 			return this;
 		}
 		resource.getProperty(key).remove();
 		return this;
- 	}
+	}
 
 	def getDisplayText(key) {
 		if (!facet) {
