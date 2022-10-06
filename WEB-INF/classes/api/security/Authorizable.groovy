@@ -56,11 +56,20 @@ class Authorizable {
 	Object toObject() {
 		def o = [
 			"id" : getIdentifier(),
-			"isGroup" : isGroup()
+			"isGroup" : isGroup(),
+			"properties" : [:]
 		];
 
+		def pref = Item.create(context).findByPath("/home/" + principal.name + "/preferences");
+		if (pref.exists()) {
+			for (e in pref.toObject().properties) {
+				o.properties[e.key] = e.value;
+			}
+		}
 		def attr = getAttributes().toObject();
-		o.properties = attr.properties;
+		for (e in attr.properties) {
+			o.properties[e.key] = e.value;
+		}
 		o.creationTime = attr.creationTime;
 		o.lastModificationTime = attr.lastModificationTime;
 		o.createdBy = attr.createdBy;
