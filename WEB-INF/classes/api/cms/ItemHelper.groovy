@@ -82,7 +82,9 @@ class ItemHelper {
 	def importAttributes(properties) {
 		if (properties instanceof Map) {
 			properties = properties.collect { e ->
-				return e.value;
+				def prop = e.value;
+				prop.key = e.key;
+				return prop;
 			}
 		}
 
