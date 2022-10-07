@@ -71,9 +71,13 @@ class Authorizable {
 			o.properties[e.key] = e.value;
 		}
 		o.creationTime = attr.creationTime;
-		o.lastModificationTime = attr.lastModificationTime;
 		o.createdBy = attr.createdBy;
+		o.lastModificationTime = attr.lastModificationTime;
 		o.lastModifiedBy = attr.lastModifiedBy;
+		if (pref.lastModified.time > attr.lastModified.time) {
+			o.lastModificationTime = pref.lastModificationTime;
+			o.lastModifiedBy = pref.lastModifiedBy;
+		}
 
 		return o;
 	}
