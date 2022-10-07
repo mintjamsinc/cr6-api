@@ -35,15 +35,7 @@ class Authorizable {
 	}
 
 	def getAttributes() {
-		def home = getHomeFolder();
-		if (!home.exists()) {
-			home.mkdirs();
-		}
-		def item = home.getItem("attributes");
-		if (!item.exists()) {
-			item.createNewFile();
-		}
-		return item;
+		return Item.create(context).findByPath(getHomeFolder().path + "/attributes");
 	}
 
 	def exists() {
@@ -65,35 +57,39 @@ class Authorizable {
 		];
 
 		def pref = Item.create(context).findByPath("/home/" + principal.name + "/preferences");
+		def prefObj = null;
 		if (pref.exists()) {
-			for (e in pref.toObject().properties) {
+			prefObj = pref.toObject();
+			for (e in prefObj.properties) {
 				o.properties[e.key] = e.value;
 			}
 		}
-		def attr = getAttributes().toObject();
+		def attr = getAttributes();
+		def attrObj = null;
 		if (attr.exists()) {
-			for (e in attr.properties) {
+			attrObj = attr.toObject();
+			for (e in attrObj.properties) {
 				o.properties[e.key] = e.value;
 			}
-			o.creationTime = attr.creationTime;
-			o.createdBy = attr.createdBy;
-			o.lastModificationTime = attr.lastModificationTime;
-			o.lastModifiedBy = attr.lastModifiedBy;
+			o.creationTime = attrObj.creationTime;
+			o.createdBy = attrObj.createdBy;
+			o.lastModificationTime = attrObj.lastModificationTime;
+			o.lastModifiedBy = attrObj.lastModifiedBy;
 		}
 		if (pref.exists()) {
 			if (!attr.exists()) {
-				o.creationTime = pref.creationTime;
-				o.createdBy = pref.createdBy;
-				o.lastModificationTime = pref.lastModificationTime;
-				o.lastModifiedBy = pref.lastModifiedBy;
+				o.creationTime = prefObj.creationTime;
+				o.createdBy = prefObj.createdBy;
+				o.lastModificationTime = prefObj.lastModificationTime;
+				o.lastModifiedBy = prefObj.lastModifiedBy;
 			} else {
 				if (pref.created.time < attr.created.time) {
-					o.creationTime = pref.creationTime;
-					o.createdBy = pref.createdBy;
+					o.creationTime = prefObj.creationTime;
+					o.createdBy = prefObj.createdBy;
 				}
 				if (pref.lastModified.time > attr.lastModified.time) {
-					o.lastModificationTime = pref.lastModificationTime;
-					o.lastModifiedBy = pref.lastModifiedBy;
+					o.lastModificationTime = prefObj.lastModificationTime;
+					o.lastModifiedBy = prefObj.lastModifiedBy;
 				}
 			}
 		}
