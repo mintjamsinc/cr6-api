@@ -35,7 +35,11 @@ class Authorizable {
 	}
 
 	def getAttributes() {
-		def item = getHomeFolder().getItem("attributes");
+		def home = getHomeFolder();
+		if (!home.exists()) {
+			home.mkdirs();
+		}
+		def item = home.getItem("attributes");
 		if (!item.exists()) {
 			item.createNewFile();
 		}
@@ -67,16 +71,31 @@ class Authorizable {
 			}
 		}
 		def attr = getAttributes().toObject();
-		for (e in attr.properties) {
-			o.properties[e.key] = e.value;
+		if (attr.exists()) {
+			for (e in attr.properties) {
+				o.properties[e.key] = e.value;
+			}
+			o.creationTime = attr.creationTime;
+			o.createdBy = attr.createdBy;
+			o.lastModificationTime = attr.lastModificationTime;
+			o.lastModifiedBy = attr.lastModifiedBy;
 		}
-		o.creationTime = attr.creationTime;
-		o.createdBy = attr.createdBy;
-		o.lastModificationTime = attr.lastModificationTime;
-		o.lastModifiedBy = attr.lastModifiedBy;
-		if (pref.lastModified.time > attr.lastModified.time) {
-			o.lastModificationTime = pref.lastModificationTime;
-			o.lastModifiedBy = pref.lastModifiedBy;
+		if (pref.exists()) {
+			if (!attr.exists()) {
+				o.creationTime = pref.creationTime;
+				o.createdBy = pref.createdBy;
+				o.lastModificationTime = pref.lastModificationTime;
+				o.lastModifiedBy = pref.lastModifiedBy;
+			} else {
+				if (pref.created.time < attr.created.time) {
+					o.creationTime = pref.creationTime;
+					o.createdBy = pref.createdBy;
+				}
+				if (pref.lastModified.time > attr.lastModified.time) {
+					o.lastModificationTime = pref.lastModificationTime;
+					o.lastModifiedBy = pref.lastModifiedBy;
+				}
+			}
 		}
 
 		return o;
