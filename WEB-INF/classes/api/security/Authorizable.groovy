@@ -94,6 +94,14 @@ class Authorizable {
 			}
 		}
 
+		if (getIdentifier() == context.session.userID) {
+			try {
+				o.authenticatedFactors = context.getAttribute("session").getAttribute("org.mintjams.cms.security.auth.AuthenticatedFactors");
+			} catch (Throwable ignore) {
+				o.authenticatedFactors = "";
+			}
+		}
+
 		return o;
 	}
 
