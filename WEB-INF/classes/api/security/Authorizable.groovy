@@ -95,10 +95,17 @@ class Authorizable {
 		}
 
 		if (getIdentifier() == context.session.userID) {
+			o.authenticationFactors = [];
+			if (attr.exists()) {
+				if (attr.contains("mi:totpSecret")) {
+					o.authenticationFactors.add("totp");
+				}
+			}
+
 			try {
-				o.authenticatedFactors = context.getAttribute("session").getAttribute("org.mintjams.cms.security.auth.AuthenticatedFactors");
+				o.authenticatedFactors = context.getAttribute("session").getAttribute("org.mintjams.cms.security.auth.AuthenticatedFactors").split(",");
 			} catch (Throwable ignore) {
-				o.authenticatedFactors = "";
+				o.authenticatedFactors = [];
 			}
 		}
 
