@@ -10,7 +10,6 @@ import java.util.Locale;
 class Facet {
 	def item;
 	def itemObject;
-	def facetDefinitions = [:];
 	def values = [:];
 
 	Facet(Item item) {
@@ -27,24 +26,13 @@ class Facet {
 			return values[valueKey];
 		}
 
-		if (!facetDefinitions.containsKey(key)) {
-			def facetPath = "/content/WEB-INF/facets/" + key + ".yml";
-			def facetResource = item.resource.resourceResolver.getResource(facetPath);
-			if (facetResource.exists()) {
-				def d = ResourceLoader.create(item.resource).loadAsYaml(facetPath);
-				if (d) {
-					facetDefinitions[key] = d;
-				}
-			}
-		}
-
 		def ScriptAPI = item.context.getAttribute("ScriptAPI");
 		if (!itemObject) {
 			itemObject = item.toObject();
 		}
 		def arguments = [
 			"item": itemObject,
-			"facetDefinitions": facetDefinitions,
+			"facetDefinitions": item.resource.session.workspace.facetProvider.getFacets(item.resource.propertyKeys),
 			"key": key
 		];
 		if (locale) {
