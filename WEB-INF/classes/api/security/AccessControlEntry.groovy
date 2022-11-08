@@ -26,6 +26,10 @@ class AccessControlEntry {
 		return Authorizable.create(context).with(accessControlEntry.principal);
 	}
 
+	def isGroup() {
+		return (getGrantee() instanceof Group);
+	}
+
 	def isAllow() {
 		return accessControlEntry.isAllow();
 	}
@@ -40,6 +44,7 @@ class AccessControlEntry {
 		def o = [
 			"id": getGrantee().getIdentifier(),
 			"grantee": getGrantee().getIdentifier(),
+			"isGroup": isGroup(),
 			"isAllow": isAllow(),
 			"privileges": privileges.collect {
 				it.name;
