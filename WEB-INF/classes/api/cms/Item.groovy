@@ -619,6 +619,9 @@ class Item {
 					"type": p.typeName,
 					"isMultiple": p.isMultiple()
 				];
+				if (p.isMasked()) {
+					prop.isMasked = true;
+				}
 
 				if (p.typeName == "Binary") {
 					if (exportsBinary) {
