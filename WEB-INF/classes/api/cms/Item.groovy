@@ -417,25 +417,23 @@ class Item {
 	}
 
 	def getTemplate(prefix, suffix) {
-		def tmpl = context.templateResolver.getTemplate(resource, prefix, suffix);
+		if (!contains("web.template")) {
+			return null;
+		}
+
+		def templatePath = getString("web.template") + suffix;
+		def tmpl = context.resourceResolver.getTemplate(templatePath, prefix);
 		if (!tmpl) {
 			return null;
 		}
 		return [
-			"item": Item.create(context).with(tmpl.resource),
+			"item": Item.create(context).findByPath(tmpl.path),
 			"scriptExtension": tmpl.scriptExtension
 		];
 	}
 
 	def getTemplate(suffix) {
-		def tmpl = context.templateResolver.getTemplate(resource, suffix);
-		if (!tmpl) {
-			return null;
-		}
-		return [
-			"item": Item.create(context).with(tmpl.resource),
-			"scriptExtension": tmpl.scriptExtension
-		];
+		return getTemplate(null, suffix);
 	}
 
 	def setAttribute(key, value) {
