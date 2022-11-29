@@ -49,6 +49,13 @@ class Authorizable {
 		return (this instanceof Group);
 	}
 
+	def isDisabled() {
+		if (exists()) {
+			return getAttributes().getBoolean("disabled");
+		}
+		return false;
+	}
+
 	Object toObject() {
 		def o = [
 			"id" : getIdentifier(),
