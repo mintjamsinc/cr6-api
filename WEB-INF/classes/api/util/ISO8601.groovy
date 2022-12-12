@@ -7,6 +7,10 @@ class ISO8601 {
 		return java.util.Date.from(java.time.OffsetDateTime.parse(value).toInstant());
 	}
 
+	static java.util.Date parseDate(long value) {
+		return new java.util.Date(value);
+	}
+
 	static long parseDuration(String value) {
 		return java.time.Duration.parse(value).toMillis();
 	}
