@@ -187,13 +187,15 @@ class Importer {
 			def refEntryPath = ex.path.substring(rootItem.path.length());
 			def refEntry = zip.getEntry(refEntryPath);
 			if (!refEntry) {
-				if (!refEntryPath.startsWith("/")) {
-					refEntryPath = "/" + refEntryPath;
-				}
-				if (!refEntryPath.startsWith("//")) {
-					refEntryPath = "/" + refEntryPath;
-				}
+				// without slash
+				refEntryPath = refEntryPath.substring(1);
 				refEntry = zip.getEntry(refEntryPath);
+
+				if (!refEntry) {
+					// double slash
+					refEntryPath = "//" + refEntryPath;
+					refEntry = zip.getEntry(refEntryPath);
+				}
 			}
 			if (!refEntry) {
 				throw ex;
