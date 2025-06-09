@@ -101,6 +101,11 @@ class Authorizable {
 			}
 		}
 
+		if (!isGroup()) {
+			o.isAdmin = (principal instanceof org.mintjams.jcr.security.AdminPrincipal);
+			o.isAnonymous = (principal instanceof org.mintjams.jcr.security.GuestPrincipal);
+		}
+
 		if (getIdentifier() == context.session.userID) {
 			o.authenticationFactors = [];
 			if (attr.exists()) {
